@@ -5,7 +5,8 @@ import {
   getCurrentWeek, 
   parseMarkdown 
 } from '../domain/timelineParser.js';
-import { DEMO_ROADMAP_DATA, QUARTERS_CONFIG } from '../data/demoData.js';
+import { QUARTERS_CONFIG } from '../data/demoData.js';
+import roadmapData from '../data/roadmap.md?raw';
 import { TimelineHeader, MonthHeaders, WeekHeaders } from './TimelineHeader.jsx';
 import { TeamCapacityRow } from './TeamCapacity.jsx';
 import { StreamContainer } from './StreamContainer.jsx';
@@ -23,7 +24,7 @@ import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation.js';
  * Main roadmap planner component
  */
 export const RoadmapPlanner = ({ 
-  markdownData = DEMO_ROADMAP_DATA,
+  markdownData = roadmapData,
   quarters = QUARTERS_CONFIG,
   enableDebug = false
 }) => {

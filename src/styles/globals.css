@@ -4,8 +4,54 @@
 
 @media print {
   .no-print { display: none !important; }
-  .roadmap-container { transform: none !important; }
-  body { margin: 0; }
+  .roadmap-container { 
+    transform: none !important; 
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+  body { 
+    margin: 0; 
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Ensure all colors and backgrounds print correctly */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Improve text readability in PDF */
+  .text-xs { font-size: 10px !important; }
+  .text-sm { font-size: 12px !important; }
+  .text-base { font-size: 14px !important; }
+  
+  /* Ensure borders are visible */
+  .border-gray-100, .border-gray-200 { 
+    border-color: #d1d5db !important; 
+  }
+  .border-gray-300 { 
+    border-color: #9ca3af !important; 
+  }
+  
+  /* Hide interactive elements that don't make sense in PDF */
+  .tooltip-text,
+  .zoom-controls,
+  .pan-hint {
+    display: none !important;
+  }
+  
+  /* Optimize timeline for printing */
+  .roadmap-container {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+  
+  /* Page break optimization */
+  .mb-4 {
+    page-break-inside: avoid;
+  }
 }
 
 .tooltip {

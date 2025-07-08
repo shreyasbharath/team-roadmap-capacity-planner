@@ -2,6 +2,12 @@
 
 An interactive, open-source roadmap and capacity planning tool built with React. Visualise project timelines, team capacity, milestones, and risks in a clean, professional interface.
 
+![Roadmap Screenshot](docs/roadmap-screenshot.png)
+
+*Interactive roadmap showing project streams, team capacity, milestones, and risk tracking*
+
+> **Note**: If the screenshot above doesn't display, run `pnpm screenshot` to generate it.
+
 ## ✨ Features
 
 - **Interactive Timeline**: Pan and zoom through your roadmap
@@ -56,6 +62,60 @@ The roadmap uses a simple markdown-like format:
 - **Deadlines**: `hard-deadline` or `soft-deadline` with ISO dates
 - **Risks**: `risk-level: high|medium|low`
 - **Labels**: Custom `deadline-label` for milestone annotations
+
+## 📄 PDF Export
+
+Generate high-quality PDFs of your roadmap for sharing and printing:
+
+### Initial Setup (One-time)
+
+First time using PDF export? Install Chrome for Puppeteer:
+
+```bash
+# Option 1: Allow Puppeteer build scripts (recommended)
+pnpm approve-builds
+# Select 'y' when prompted for puppeteer
+
+# Option 2: Manual Chrome installation
+npx puppeteer browsers install chrome
+```
+
+### Generate PDFs
+
+```bash
+# Generate standard A4 portrait PDF
+pnpm pdf
+
+# Generate landscape orientation (recommended for wide roadmaps)
+pnpm pdf:landscape
+
+# Generate A3 size for large roadmaps
+pnpm pdf:a3
+
+# Custom options
+pnpm pdf --format=Letter --output=my-roadmap.pdf
+pnpm pdf --landscape --format=A3 --output=quarterly-roadmap.pdf
+```
+
+### PDF Features
+
+- **Paper Formats**: A4, A3, Letter, Legal, Tabloid
+- **Orientations**: Portrait and Landscape
+- **High Quality**: 2x resolution for crisp text and graphics
+- **Print Optimised**: Enhanced colors, borders, and text sizing
+- **Professional Layout**: Auto-generated headers with date, page numbering
+- **Full Color**: All timeline colors, backgrounds, and styling preserved
+
+### Screenshot Generation
+
+Generate high-resolution screenshots for documentation:
+
+```bash
+# Generate screenshot for README/docs
+pnpm screenshot
+```
+
+Files are saved with timestamps: `roadmap-2025-07-08T14-30-00.pdf`
 
 ## 🎮 Controls
 
@@ -174,9 +234,14 @@ theme: {
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Follow the existing code style and testing patterns
-4. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-5. Push to the branch (`git push origin feature/amazing-feature`)
-6. Open a Pull Request
+4. Update documentation and generate screenshots if needed:
+   ```bash
+   # Generate updated screenshot for README
+   pnpm screenshot
+   ```
+5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
 
 

@@ -226,6 +226,16 @@ roadmap-*.md.backup
 exported-roadmaps/
 screenshots/
 
+# Generated PDFs
+roadmap-*.pdf
+*.pdf
+!docs/*.pdf
+
+# Generated screenshots (except docs)
+screenshots/
+*.png
+!docs/*.png
+
 # Development
 .scratch/
 .playground/
