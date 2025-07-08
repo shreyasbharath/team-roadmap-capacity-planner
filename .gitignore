@@ -221,6 +221,7 @@ crash.log
 *.backup
 *.bak
 *.orig
+.eslintrc.js.backup
 roadmap-*.md.backup
 exported-roadmaps/
 screenshots/
