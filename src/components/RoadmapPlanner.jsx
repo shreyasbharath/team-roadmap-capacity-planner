@@ -9,6 +9,7 @@ import { QUARTERS_CONFIG } from '../data/demoData.js';
 import roadmapData from '../data/roadmap.md?raw';
 import { TimelineHeader, MonthHeaders, WeekHeaders } from './TimelineHeader.jsx';
 import { TeamCapacityRow } from './TeamCapacity.jsx';
+import { MilestonesRow } from './StreamComponents.jsx';
 import { StreamContainer } from './StreamContainer.jsx';
 import { 
   useZoom, 
@@ -26,7 +27,8 @@ import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation.js';
 export const RoadmapPlanner = ({ 
   markdownData = roadmapData,
   quarters = QUARTERS_CONFIG,
-  enableDebug = false
+  enableDebug = false,
+  loadingDelay = 1000
 }) => {
   const [loading, setLoading] = useState(true);
   const [showPanHint, setShowPanHint] = useState(true);
@@ -43,7 +45,7 @@ export const RoadmapPlanner = ({
   });
   
   // Parse roadmap data
-  const { streams, teamCapacity } = parseMarkdown(markdownData);
+  const { streams, teamCapacity, milestones } = parseMarkdown(markdownData);
   
   // Zoom functionality
   const { zoom, zoomIn, zoomOut, resetZoom } = useZoom();
@@ -61,9 +63,9 @@ export const RoadmapPlanner = ({
     const timer = setTimeout(() => {
       setLoading(false);
       setTimeout(() => setShowPanHint(false), 3000);
-    }, 1000);
+    }, loadingDelay);
     return () => clearTimeout(timer);
-  }, []);
+  }, [loadingDelay]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -109,6 +111,15 @@ export const RoadmapPlanner = ({
             currentWeekIndex={currentWeekIndex}
           />
           
+          {/* Milestones Section */}
+          {milestones && milestones.length > 0 && (
+            <MilestonesRow
+              milestones={milestones}
+              weeks={weeks}
+              currentWeekIndex={currentWeekIndex}
+            />
+          )}
+          
           <div className="relative overflow-visible" data-testid="streams-container">
             {streams.map((stream, streamIndex) => (
               <StreamContainer
@@ -124,6 +135,7 @@ export const RoadmapPlanner = ({
             <DebugInfo 
               streams={streams}
               teamCapacity={teamCapacity}
+              milestones={milestones}
               currentWeek={currentWeek}
               currentDate={currentDate}
             />

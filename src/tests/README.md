@@ -95,7 +95,7 @@ The tests use mock roadmap data to ensure consistent, predictable results:
 - Widget Framework v2.0 (Jul W1-Sep W2) - color: #8B5CF6
   - Team: Team Phoenix
 
-## Product Stream Beta  
+## Product Stream Beta
 - Notification Engine (Jul W3-Oct W4) - color: #EF4444
   - Team: Team Falcon
 - Data Visualization Tool (Aug W1-Oct W2) - color: #10B981
@@ -106,14 +106,14 @@ The tests use mock roadmap data to ensure consistent, predictable results:
 
 With the correct calculations:
 - **Widget Framework v2.0** (Jul W1-Sep W2): left ≈ 256px, width ≈ 640px
-- **Notification Engine** (Jul W3-Oct W4): left ≈ 384px, width ≈ 896px  
+- **Notification Engine** (Jul W3-Oct W4): left ≈ 384px, width ≈ 896px
 - **Data Visualization Tool** (Aug W1-Oct W2): left ≈ 512px, width ≈ 640px
 
 ## Debugging
 
 If tests fail:
 
-1. Check console logs for timeline bar positioning calculations
+1. Check console logs
 2. Verify `TimelineBar` component is rendering with correct `data-testid`
 3. Check CSS positioning values are within expected ranges
 4. Ensure container overflow is set to `visible`

@@ -88,16 +88,17 @@ export const PanHint = ({ show }) => {
 /**
  * Debug information panel
  */
-export const DebugInfo = ({ streams, teamCapacity, currentWeek, currentDate }) => {
+export const DebugInfo = ({ streams, teamCapacity, milestones, currentWeek, currentDate }) => {
   const totalRisks = streams.reduce((total, stream) => 
     total + (stream.risks ? stream.risks.length : 0), 0
   );
   
   return (
     <div className="no-print mt-4 text-xs text-gray-500 bg-gray-50 p-3 rounded border-t">
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         <div>Streams: {streams.length}</div>
         <div>Team Capacity: {teamCapacity.length}</div>
+        <div>Milestones: {milestones ? milestones.length : 0}</div>
         <div>Risks: {totalRisks}</div>
         <div>Current: {currentWeek} ({currentDate})</div>
       </div>

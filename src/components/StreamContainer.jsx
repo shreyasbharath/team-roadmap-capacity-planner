@@ -2,7 +2,7 @@
 import React from 'react';
 import { 
   StreamHeader, 
-  MilestonesRow, 
+  StreamMilestonesRow, 
   RisksRow, 
   processStreamDeadlines 
 } from './StreamComponents.jsx';
@@ -25,7 +25,7 @@ export const StreamContainer = ({ stream, weeks, currentWeekIndex }) => {
       />
 
       {hasDeadlines && (
-        <MilestonesRow 
+        <StreamMilestonesRow 
           weeks={weeks}
           currentWeekIndex={currentWeekIndex}
           hardDeadlines={hardDeadlines}

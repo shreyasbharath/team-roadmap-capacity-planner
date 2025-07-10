@@ -27,9 +27,88 @@ export const StreamHeader = ({ streamName, itemCount, riskCount }) => (
 );
 
 /**
- * Renders milestone annotations for a specific week
+ * Renders milestone annotation for a specific milestone
  */
-export const MilestoneAnnotation = ({ deadlines, type }) => {
+export const MilestoneAnnotation = ({ milestone }) => {
+  const isHardDate = milestone.hardDate;
+  const isSoftDate = milestone.softDate;
+  const bgColor = isHardDate ? 'bg-red-500 border-red-600' : 'bg-blue-500 border-blue-600';
+  const tooltipPrefix = isHardDate ? 'Hard Milestone' : 'Soft Milestone';
+  const date = isHardDate ? milestone.hardDate : milestone.softDate;
+  
+  return (
+    <TooltipWrapper 
+      text={`${tooltipPrefix}: ${date} - ${milestone.name}`}
+    >
+      <div className={`${bgColor} text-white text-xs px-1 py-0.5 rounded shadow-sm border mb-0.5 max-w-14 text-center cursor-help`}>
+        <div className="font-medium text-xs leading-tight">
+          {new Date(date).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
+        </div>
+        <div className="opacity-90 leading-tight truncate" style={{ fontSize: '10px' }}>
+          {milestone.name.replace('Milestone: ', '')}
+        </div>
+      </div>
+    </TooltipWrapper>
+  );
+};
+
+/**
+ * Renders the milestones row showing all project milestones
+ */
+export const MilestonesRow = ({ milestones, weeks, currentWeekIndex }) => {
+  // Process milestones to map them to weeks
+  const processedMilestones = milestones.map(milestone => {
+    const date = milestone.hardDate || milestone.softDate;
+    if (!date) return null;
+    
+    const weekIndex = parseDeadlineDate(date, weeks);
+    if (weekIndex === null) return null;
+    
+    return {
+      ...milestone,
+      weekIndex,
+      date,
+      formattedDate: new Date(date).toLocaleDateString('en-AU', { 
+        day: 'numeric', 
+        month: 'short' 
+      })
+    };
+  }).filter(Boolean);
+  
+  return (
+    <div className="flex border-b-2 border-gray-400 bg-purple-50">
+      <div className="w-48 p-2 border-r border-gray-300 text-sm font-medium bg-purple-100 text-gray-700">
+        Milestones
+      </div>
+      <div className="flex relative overflow-visible" style={{ minHeight: '2.5rem' }}>
+        {weeks.map((week, weekIndex) => {
+          const weekMilestones = processedMilestones.filter(m => m.weekIndex === weekIndex);
+          
+          return (
+            <div key={week} className="relative w-16 border-r border-gray-200 bg-purple-50" style={{ minHeight: '2.5rem' }}>
+              {weekIndex === currentWeekIndex && (
+                <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
+              )}
+              
+              {weekMilestones.length > 0 && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-0.5">
+                  {weekMilestones.map((milestone, index) => (
+                    <MilestoneAnnotation key={index} milestone={milestone} />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Renders deadline annotations for a specific week
+ */
+export const DeadlineAnnotation = ({ deadlines, type }) => {
   const bgColor = type === 'hard' ? 'bg-red-500 border-red-600' : 'bg-blue-500 border-blue-600';
   const tooltipPrefix = type === 'hard' ? 'Hard Deadline' : 'Soft Deadline';
   
@@ -49,9 +128,9 @@ export const MilestoneAnnotation = ({ deadlines, type }) => {
 };
 
 /**
- * Renders the milestones row for a stream
+ * Renders the stream deadlines row for a stream
  */
-export const MilestonesRow = ({ weeks, currentWeekIndex, hardDeadlines, softDeadlines }) => (
+export const StreamMilestonesRow = ({ weeks, currentWeekIndex, hardDeadlines, softDeadlines }) => (
   <div className="flex border-b border-gray-300 bg-yellow-50">
     <div className="w-48 p-2 border-r border-gray-300 text-sm font-medium bg-yellow-100 text-gray-700">
       Milestones
@@ -70,8 +149,8 @@ export const MilestonesRow = ({ weeks, currentWeekIndex, hardDeadlines, softDead
             
             {weekHasDeadlines && (
               <div className="absolute inset-0 flex flex-col items-center justify-center p-0.5">
-                <MilestoneAnnotation deadlines={weekHardDeadlines} type="hard" />
-                <MilestoneAnnotation deadlines={weekSoftDeadlines} type="soft" />
+                <DeadlineAnnotation deadlines={weekHardDeadlines} type="hard" />
+                <DeadlineAnnotation deadlines={weekSoftDeadlines} type="soft" />
               </div>
             )}
           </div>
@@ -157,7 +236,7 @@ export const TimelineBar = ({ item, weeks }) => {
   return (
     <TooltipWrapper text={`${item.name}: ${item.timeline} | Team: ${item.team}`}>
       <div
-        className="absolute top-1 rounded text-white text-sm font-medium flex items-center justify-start px-2 overflow-hidden z-10 cursor-help"
+        className="absolute top-1 rounded text-white text-sm font-medium flex items-center justify-start px-2 overflow-hidden cursor-help"
         data-testid="timeline-bar"
         style={{
           position: 'absolute',

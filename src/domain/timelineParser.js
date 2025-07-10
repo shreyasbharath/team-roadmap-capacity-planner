@@ -45,14 +45,6 @@ export const parseTimelineRange = (timeline, weeks) => {
   const startIndex = weeks.indexOf(parts[0].trim());
   const endIndex = weeks.indexOf(parts[1].trim());
   
-  // Debug logging for missing weeks
-  if (startIndex < 0) {
-    console.warn(`Start week "${parts[0].trim()}" not found in weeks array`);
-  }
-  if (endIndex < 0) {
-    console.warn(`End week "${parts[1].trim()}" not found in weeks array`);
-  }
-  
   return {
     start: startIndex >= 0 ? startIndex : 0,
     end: endIndex >= 0 ? endIndex : 0
@@ -92,7 +84,6 @@ export const parseDeadlineDate = (dateStr, weeks) => {
     }
     
     if (isNaN(date.getTime())) {
-      console.warn(`Failed to parse deadline date: ${dateStr}`);
       return null;
     }
     
@@ -103,12 +94,8 @@ export const parseDeadlineDate = (dateStr, weeks) => {
     const weekStr = `${month} W${weekOfMonth}`;
     
     const weekIndex = weeks.indexOf(weekStr);
-    if (weekIndex < 0) {
-      console.warn(`Deadline week "${weekStr}" not found in weeks array for date: ${dateStr}`);
-    }
     return weekIndex >= 0 ? weekIndex : null;
   } catch (e) {
-    console.warn(`Error parsing deadline date: ${dateStr}`, e);
     return null;
   }
 };
@@ -120,19 +107,29 @@ export const parseMarkdown = (markdownText) => {
   const lines = markdownText.split('\n');
   const streams = [];
   const teamCapacity = [];
+  const milestones = [];
   let currentStream = null;
   let inTeamCapacitySection = false;
+  let inMilestonesSection = false;
 
   lines.forEach(line => {
     const trimmed = line.trim();
     
     if (trimmed.startsWith('## Team Capacity')) {
       inTeamCapacitySection = true;
+      inMilestonesSection = false;
       return;
     }
     
     if (trimmed.startsWith('## Streams')) {
       inTeamCapacitySection = false;
+      inMilestonesSection = false;
+      return;
+    }
+    
+    if (trimmed.startsWith('## Milestones')) {
+      inTeamCapacitySection = false;
+      inMilestonesSection = true;
       return;
     }
     
@@ -144,12 +141,15 @@ export const parseMarkdown = (markdownText) => {
         risks: []
       };
       inTeamCapacitySection = false;
+      inMilestonesSection = false;
     } else if (trimmed.startsWith('- **')) {
       const item = parseMarkdownItem(trimmed);
       if (!item) return;
       
       if (inTeamCapacitySection) {
         teamCapacity.push(item);
+      } else if (inMilestonesSection) {
+        milestones.push(item);
       } else if (currentStream) {
         if (item.riskLevel) {
           currentStream.risks.push(item);
@@ -167,11 +167,7 @@ export const parseMarkdown = (markdownText) => {
     stream.items.length > 0 || (stream.risks && stream.risks.length > 0)
   );
   
-  // Debug logging
-  console.log('Parsed streams:', filteredStreams.length);
-  console.log('Team capacity items:', teamCapacity.length);
-  
-  return { streams: filteredStreams, teamCapacity };
+  return { streams: filteredStreams, teamCapacity, milestones };
 };
 
 /**
@@ -191,6 +187,8 @@ const parseMarkdownItem = (line) => {
   let softDeadline = null;
   let deadlineLabel = null;
   let riskLevel = null;
+  let hardDate = null;
+  let softDate = null;
   
   // Parse additional properties
   parts.forEach(part => {
@@ -209,6 +207,12 @@ const parseMarkdownItem = (line) => {
     if (part.includes('risk-level:')) {
       riskLevel = part.split('risk-level:')[1].trim();
     }
+    if (part.includes('hard-date:')) {
+      hardDate = part.split('hard-date:')[1].trim();
+    }
+    if (part.includes('soft-date:')) {
+      softDate = part.split('soft-date:')[1].trim();
+    }
   });
   
   return {
@@ -219,6 +223,8 @@ const parseMarkdownItem = (line) => {
     hardDeadline,
     softDeadline,
     deadlineLabel,
-    riskLevel
+    riskLevel,
+    hardDate,
+    softDate
   };
 };

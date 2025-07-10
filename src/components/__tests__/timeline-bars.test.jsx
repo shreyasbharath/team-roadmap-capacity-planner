@@ -81,7 +81,14 @@ describe('Timeline Bars Visual Tests', () => {
       expect(timelineBar.style.position).toBe('absolute');
       expect(timelineBar.style.left).toBe(expectedLeft);
       expect(timelineBar.style.width).toBe(expectedWidth);
-      expect(timelineBar.style.backgroundColor).toBe(color);
+      // Convert hex to RGB for comparison since browsers return RGB format
+      const hexToRgb = (hex) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgb(${r}, ${g}, ${b})`;
+      };
+      expect(timelineBar.style.backgroundColor).toBe(hexToRgb(color));
       expect(timelineBar.style.zIndex).toBe('20');
     });
   });

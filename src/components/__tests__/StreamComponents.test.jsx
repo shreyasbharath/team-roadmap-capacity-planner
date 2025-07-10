@@ -59,13 +59,14 @@ describe('StreamComponents', () => {
   describe('MilestoneAnnotation', () => {
     it('should render hard deadline with correct styling', () => {
       // Arrange
-      const deadlines = [{
-        formattedDate: '15 Aug',
-        item: 'Test Deadline'
-      }];
+      const milestone = {
+        hardDate: '2025-08-15',
+        softDate: null,
+        name: 'Milestone: Test Deadline'
+      };
       
       // Act
-      render(<MilestoneAnnotation deadlines={deadlines} type="hard" />);
+      render(<MilestoneAnnotation milestone={milestone} />);
       
       // Assert
       expect(screen.getByText('15 Aug')).toBeInTheDocument();
@@ -77,13 +78,14 @@ describe('StreamComponents', () => {
 
     it('should render soft deadline with correct styling', () => {
       // Arrange
-      const deadlines = [{
-        formattedDate: '20 Aug',
-        item: 'Soft Deadline'
-      }];
+      const milestone = {
+        hardDate: null,
+        softDate: '2025-08-20',
+        name: 'Milestone: Soft Deadline'
+      };
       
       // Act
-      render(<MilestoneAnnotation deadlines={deadlines} type="soft" />);
+      render(<MilestoneAnnotation milestone={milestone} />);
       
       // Assert
       expect(screen.getByText('20 Aug')).toBeInTheDocument();
