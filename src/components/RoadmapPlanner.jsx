@@ -92,6 +92,7 @@ export const RoadmapPlanner = ({
       >
         <div 
           className="roadmap-container min-w-max bg-white rounded-lg shadow-lg border"
+          data-testid="roadmap-container"
           style={{ 
             transform: `scale(${zoom})`,
             transformOrigin: 'top left',
@@ -108,7 +109,7 @@ export const RoadmapPlanner = ({
             currentWeekIndex={currentWeekIndex}
           />
           
-          <div className="relative">
+          <div className="relative overflow-visible" data-testid="streams-container">
             {streams.map((stream, streamIndex) => (
               <StreamContainer
                 key={streamIndex}

@@ -56,7 +56,7 @@ export const MilestonesRow = ({ weeks, currentWeekIndex, hardDeadlines, softDead
     <div className="w-48 p-2 border-r border-gray-300 text-sm font-medium bg-yellow-100 text-gray-700">
       Milestones
     </div>
-    <div className="flex relative" style={{ minHeight: '2.5rem' }}>
+    <div className="flex relative overflow-visible" style={{ minHeight: '2.5rem' }}>
       {weeks.map((week, weekIndex) => {
         const weekHardDeadlines = hardDeadlines.filter(d => d.weekIndex === weekIndex);
         const weekSoftDeadlines = softDeadlines.filter(d => d.weekIndex === weekIndex);
@@ -119,7 +119,7 @@ export const RisksRow = ({ weeks, currentWeekIndex, risks }) => (
     <div className="w-48 p-2 border-r border-gray-300 text-sm font-medium bg-red-100 text-gray-700">
       Risks
     </div>
-    <div className="flex relative" style={{ minHeight: '2.5rem' }}>
+    <div className="flex relative overflow-visible" style={{ minHeight: '2.5rem' }}>
       {weeks.map((week, weekIndex) => {
         const weekRisks = risks.filter(risk => {
           const { start, end } = parseTimelineRange(risk.timeline, weeks);
@@ -151,19 +151,22 @@ export const RisksRow = ({ weeks, currentWeekIndex, risks }) => (
  */
 export const TimelineBar = ({ item, weeks }) => {
   const { start, end } = parseTimelineRange(item.timeline, weeks);
-  const width = ((end - start + 1) * 4);
-  const left = (start * 4);
+  const width = ((end - start + 1));
+  const left = (start);
   
   return (
     <TooltipWrapper text={`${item.name}: ${item.timeline} | Team: ${item.team}`}>
       <div
         className="absolute top-1 rounded text-white text-sm font-medium flex items-center justify-start px-2 overflow-hidden z-10 cursor-help"
+        data-testid="timeline-bar"
         style={{
-          left: `${left}rem`,
-          width: `${width}rem`,
+          position: 'absolute',
+          left: `${left * 4}rem`,
+          width: `${width * 4}rem`,
           height: '2rem',
           backgroundColor: item.color,
-          textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
+          textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+          zIndex: 20
         }}
       >
         <span className="whitespace-nowrap overflow-hidden text-ellipsis">

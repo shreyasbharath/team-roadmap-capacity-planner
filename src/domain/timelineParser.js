@@ -17,6 +17,9 @@ export const generateWeeks = (quarters) => {
 
 /**
  * Calculates the current week based on today's date
+ * 
+ * Dates that would fall in "Week 5" of a month are automatically
+ * mapped to "Week 4" to fit our 4-week-per-month model.
  */
 export const getCurrentWeek = (weeks, fallback = 'Aug W2') => {
   const now = new Date();
@@ -24,7 +27,7 @@ export const getCurrentWeek = (weeks, fallback = 'Aug W2') => {
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const currentMonthName = monthNames[month];
   const day = now.getDate();
-  const weekOfMonth = Math.ceil(day / 7);
+  const weekOfMonth = Math.min(Math.ceil(day / 7), 4); // Cap at week 4
   const currentWeek = `${currentMonthName} W${weekOfMonth}`;
   
   return weeks.includes(currentWeek) ? currentWeek : fallback;
@@ -42,6 +45,14 @@ export const parseTimelineRange = (timeline, weeks) => {
   const startIndex = weeks.indexOf(parts[0].trim());
   const endIndex = weeks.indexOf(parts[1].trim());
   
+  // Debug logging for missing weeks
+  if (startIndex < 0) {
+    console.warn(`Start week "${parts[0].trim()}" not found in weeks array`);
+  }
+  if (endIndex < 0) {
+    console.warn(`End week "${parts[1].trim()}" not found in weeks array`);
+  }
+  
   return {
     start: startIndex >= 0 ? startIndex : 0,
     end: endIndex >= 0 ? endIndex : 0
@@ -50,6 +61,9 @@ export const parseTimelineRange = (timeline, weeks) => {
 
 /**
  * Parses deadline date string to week index
+ * 
+ * Dates that would fall in "Week 5" of a month are automatically
+ * mapped to "Week 4" to fit our 4-week-per-month model.
  */
 export const parseDeadlineDate = (dateStr, weeks) => {
   if (!dateStr) return null;
@@ -77,17 +91,24 @@ export const parseDeadlineDate = (dateStr, weeks) => {
       date = new Date(dateStr);
     }
     
-    if (isNaN(date.getTime())) return null;
+    if (isNaN(date.getTime())) {
+      console.warn(`Failed to parse deadline date: ${dateStr}`);
+      return null;
+    }
     
     // Map date to week
     const month = date.toLocaleDateString('en-US', { month: 'short' });
     const day = date.getDate();
-    const weekOfMonth = Math.ceil(day / 7);
+    const weekOfMonth = Math.min(Math.ceil(day / 7), 4); // Cap at week 4
     const weekStr = `${month} W${weekOfMonth}`;
     
     const weekIndex = weeks.indexOf(weekStr);
+    if (weekIndex < 0) {
+      console.warn(`Deadline week "${weekStr}" not found in weeks array for date: ${dateStr}`);
+    }
     return weekIndex >= 0 ? weekIndex : null;
   } catch (e) {
+    console.warn(`Error parsing deadline date: ${dateStr}`, e);
     return null;
   }
 };
@@ -140,7 +161,17 @@ export const parseMarkdown = (markdownText) => {
   });
   
   if (currentStream) streams.push(currentStream);
-  return { streams, teamCapacity };
+  
+  // Filter out streams with no items and no risks
+  const filteredStreams = streams.filter(stream => 
+    stream.items.length > 0 || (stream.risks && stream.risks.length > 0)
+  );
+  
+  // Debug logging
+  console.log('Parsed streams:', filteredStreams.length);
+  console.log('Team capacity items:', teamCapacity.length);
+  
+  return { streams: filteredStreams, teamCapacity };
 };
 
 /**

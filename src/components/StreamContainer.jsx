@@ -17,7 +17,7 @@ export const StreamContainer = ({ stream, weeks, currentWeekIndex }) => {
   const hasRisks = stream.risks && stream.risks.length > 0;
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 overflow-visible" data-testid="stream-container">
       <StreamHeader 
         streamName={stream.name}
         itemCount={stream.items.length}

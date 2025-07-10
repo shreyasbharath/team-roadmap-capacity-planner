@@ -11,6 +11,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
+    "test:timeline-bars": "vitest run src/tests/timeline-bar-rendering.test.js",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "pdf": "node scripts/generate-pdf.js",

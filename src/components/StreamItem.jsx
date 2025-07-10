@@ -14,7 +14,7 @@ export const WeekCell = ({
   hasSoftDeadline, 
   hasRisk 
 }) => (
-  <div key={week} className="relative w-16 border-r border-gray-100" style={{ minHeight: '3rem' }}>
+  <div key={week} className="relative w-16 border-r border-gray-100" data-testid="week-cell" style={{ minHeight: '3rem' }}>
     {/* Current Date Line */}
     {weekIndex === currentWeekIndex && (
       <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
@@ -48,15 +48,22 @@ export const StreamItem = ({
   softDeadlines, 
   risks 
 }) => {
+  const { start, end } = parseTimelineRange(item.timeline, weeks);
+  
   return (
-    <div className="flex border-b border-gray-200 min-h-12 relative bg-white">
+    <div className="flex border-b border-gray-200 min-h-12 relative bg-white" data-testid="stream-item">
       <TooltipWrapper text={`Team: ${item.team}`}>
         <div className="w-48 p-2 border-r border-gray-300 text-sm bg-gray-50 pl-4 cursor-help overflow-hidden">
           <span className="truncate block">{item.team}</span>
         </div>
       </TooltipWrapper>
       
-      <div className="flex relative" style={{ minHeight: '3rem' }}>
+      <div 
+        className="flex relative overflow-visible" 
+        style={{ 
+          minHeight: '3rem'
+        }}
+      >
         {/* Week cells with vertical lines */}
         {weeks.map((week, weekIndex) => {
           const hasHardDeadline = hardDeadlines.some(d => d.weekIndex === weekIndex);
@@ -79,8 +86,23 @@ export const StreamItem = ({
           );
         })}
         
-        {/* Timeline bar */}
-        <TimelineBar item={item} weeks={weeks} />
+        {/* Timeline bar positioned absolutely within the timeline container */}
+        <div
+          className="absolute top-1 rounded text-white text-sm font-medium flex items-center justify-start px-2 overflow-hidden cursor-help"
+          data-testid="timeline-bar"
+          style={{
+            left: `${start * 4}rem`,
+            width: `${(end - start + 1) * 4}rem`,
+            height: '2rem',
+            backgroundColor: item.color,
+            textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+            zIndex: 20
+          }}
+        >
+          <span className="whitespace-nowrap overflow-hidden text-ellipsis">
+            {item.name}
+          </span>
+        </div>
       </div>
     </div>
   );

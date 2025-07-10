@@ -2,6 +2,7 @@
 // Configuration constants for the roadmap planner
 
 export const QUARTERS_CONFIG = [
+  { name: 'Q2 2025', months: ['Jun'] },
   { name: 'Q3 2025', months: ['Jul', 'Aug', 'Sep'] },
   { name: 'Q4 2025', months: ['Oct', 'Nov', 'Dec'] }
 ];
