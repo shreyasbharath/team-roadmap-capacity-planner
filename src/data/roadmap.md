@@ -1,29 +1,40 @@
-# Q3/Q4 2025 Product Roadmap
+# Enterprise Platform Roadmap - Q3/Q4 2025
 
 ## Team Capacity
-- **Sarah's Annual Leave**: Aug W2-Aug W3 | color: #FFA500
-- **Mike's Conference Trip**: Sep W1-Sep W2 | color: #FF6B6B
-- **Alex Summer Break**: Sep W3-Sep W4 | color: #FF8C42
-- **Emma's Family Time**: Oct W1-Oct W2 | color: #9B59B6
-- **Team Offsite Planning**: Nov W2-Nov W3 | color: #34D399
-
-## Milestones
-- **Milestone: Mobile v3.0 Release**: hard-date: 2025-08-15 | color: #FF0000
-- **Milestone: Analytics Dashboard Launch**: hard-date: 2025-08-12 | color: #00AA00
-- **Milestone: Push System Go-Live**: hard-date: 2025-10-25 | color: #FF4444
-- **Milestone: Beta Testing Complete**: soft-date: 2025-09-01 | color: #0000FF
-- **Milestone: Marketing Campaign Launch**: soft-date: 2025-11-01 | color: #AA00FF
+- **Alex Annual Leave**: Jul W3-Jul W4 | color: #FFA500
+- **Jordan Conference**: Aug W2-Aug W2 | color: #FF6B6B  
+- **Taylor Training**: Sep W1-Sep W2 | color: #9B59B6
+- **Summer Holidays**: Aug W1-Aug W3 | color: #FFB84D
+- **Q4 Planning Week**: Oct W1-Oct W1 | color: #A78BFA
 
 ## Streams
 
 ### Mobile Platform
-- **Risk: iOS 18 compatibility issues**: Aug W2-Aug W4 | risk-level: high | color: #FF4444
-- **Risk: App Store review delays**: Sep W1-Sep W2 | risk-level: medium | color: #FFA500
-- **Mobile App v3.0**: Jul W1-Sep W2 | Sarah, Alex, Mobile Team | color: #4F46E5
-- **Push notification system**: Jul W3-Oct W4 | Backend Team | color: #EF4444
-- **Offline sync capability**: Sep W1-Nov W2 | Mobile Team | color: #8B5CF6
+- **Risk: iOS 17 Compatibility**: Jul W1-Jul W3 | risk-level: high | color: #DC2626
+- **Mobile App v3.0**: Jul W1-Sep W2 | Mobile Team (4 devs) | hard-deadline: 2025-09-15 | deadline-label: App Store Release | color: #4F46E5
+- **Push Notifications**: Aug W1-Aug W4 | Mobile Team | color: #7C3AED
+- **Offline Sync**: Sep W3-Oct W2 | Mobile Team | soft-deadline: 2025-10-15 | deadline-label: V3.1 Release | color: #5B21B6
 
 ### Analytics Platform
-- **Risk: Data migration complexity**: Aug W1-Aug W2 | risk-level: high | color: #FF4444
-- **Real-time Dashboard**: Aug W1-Oct W2 | Backend Team, Frontend Team | color: #10B981
-- **Custom reporting engine**: Aug W3-Sep W4 | Backend Team | color: #059669
+- **Real-time Dashboard**: Jul W2-Aug W3 | Analytics Team (3 devs) | color: #059669
+- **Custom Reports Engine**: Aug W4-Oct W1 | Analytics Team | color: #047857
+- **Risk: Data Privacy Compliance**: Sep W1-Sep W4 | risk-level: medium | color: #F59E0B
+- **Advanced Analytics**: Oct W2-Nov W2 | Analytics Team | color: #065F46
+
+### Infrastructure
+- **Cloud Migration**: Jul W1-Sep W4 | DevOps Team (2 devs) | color: #DC2626
+- **Risk: Migration Downtime**: Aug W2-Aug W3 | risk-level: high | color: #991B1B
+- **Auto-scaling Setup**: Oct W1-Oct W4 | DevOps Team | color: #B91C1C
+- **Security Audit**: Nov W1-Nov W2 | Security Team | hard-deadline: 2025-11-15 | deadline-label: Compliance Deadline | color: #7F1D1D
+
+### Product Strategy
+- **Market Research**: Jul W1-Jul W4 | Product Team | color: #2563EB
+- **User Testing**: Aug W1-Aug W2 | Product Team | color: #1D4ED8
+- **Feature Prioritisation**: Aug W3-Aug W4 | Product Team | color: #1E40AF
+- **Q1 2026 Planning**: Oct W3-Nov W1 | Product Team | soft-deadline: 2025-11-01 | deadline-label: Board Presentation | color: #1E3A8A
+
+### Milestones
+- **Alpha Release**: Aug W1 | hard-deadline: 2025-08-01 | deadline-label: Internal Testing | color: #F59E0B
+- **Beta Release**: Sep W1 | hard-deadline: 2025-09-01 | deadline-label: Customer Preview | color: #EAB308
+- **Production Release**: Oct W1 | hard-deadline: 2025-10-01 | deadline-label: General Availability | color: #059669
+- **Post-launch Review**: Nov W1 | soft-deadline: 2025-11-01 | deadline-label: Lessons Learned | color: #0891B2

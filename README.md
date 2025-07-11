@@ -57,6 +57,8 @@ pnpm dev
 pnpm build
 ```
 
+> **💡 Development Note**: The default roadmap (`src/data/roadmap.md`) uses the complex example to showcase all features during development. This provides a comprehensive reference for testing and feature validation.
+
 ### Desktop Development
 
 ```bash
