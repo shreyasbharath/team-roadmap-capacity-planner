@@ -1,6 +1,6 @@
 # Roadmap Planner
 
-An interactive, open-source roadmap and capacity planning tool built with React. Visualise project timelines, team capacity, milestones, and risks in a clean, professional interface.
+A **cross-platform** interactive roadmap and capacity planning tool built with React and Tauri. Available as both a web application and a native desktop app for Windows, macOS, and Linux.
 
 ![Roadmap Screenshot](docs/roadmap-screenshot.png)
 
@@ -8,38 +8,82 @@ An interactive, open-source roadmap and capacity planning tool built with React.
 
 > **Note**: If the screenshot above doesn't display, run `pnpm screenshot` to generate it.
 
+## 🎯 Platform Support
+
+**🌐 Web Application**: Access anywhere through your browser  
+**🖥️ Desktop Application**: Native app with file system access and enhanced performance
+- **Windows**: `.msi` installer with auto-updater support
+- **macOS**: Universal binary (Intel + Apple Silicon) with code signing
+- **Linux**: `.deb` and `.AppImage` packages
+
 ## ✨ Features
 
-- **Interactive Timeline**: Pan and zoom through your roadmap
+### Core Features
+- **Interactive Timeline**: Pan and zoom through your roadmap with smooth performance
 - **Team Capacity Planning**: Visualise leave, holidays, and resource constraints
 - **Risk Management**: Track and display project risks with severity levels
 - **Milestone Tracking**: Hard and soft deadlines with visual indicators
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Export Options**: Print or save as PDF/PNG
-- **Keyboard Navigation**: Full keyboard support for accessibility
-- **Customizable**: Easy to modify colours, data, and layout
+- **Responsive Design**: Optimised for desktop, tablet, and mobile
+
+### Desktop-Specific Features
+- **File Management**: Save and load roadmap files directly to your filesystem
+- **Enhanced Export**: Native save dialogs with full PDF/PNG export
+- **Keyboard Navigation**: Full keyboard support with OS-native shortcuts
+- **Performance**: Native rendering with hardware acceleration
+- **Offline First**: No internet connection required
+
+### Web-Specific Features
+- **Instant Access**: No installation required
+- **Share URLs**: Link directly to specific roadmap views
+- **Cloud Integration**: Easy deployment to any hosting platform
 
 ## 🚀 Quick Start
 
-### Installation
+### Prerequisites
+
+- **Node.js** 18+ and **pnpm** (for both web and desktop development)
+- **Rust** 1.70+ (for desktop app development only)
+
+### Web Development
 
 ```bash
 # Install dependencies
 pnpm install
 
-# Start development server
+# Start web development server
 pnpm dev
+
+# Build for web deployment
+pnpm build
 ```
 
-### Usage
+### Desktop Development
 
-1. **Customise the data** in `src/data/roadmap.md`
-2. **Modify colours and styling** in the configuration files
-3. **Add your own streams, milestones, and capacity planning**
+```bash
+# Install dependencies (includes Tauri)
+pnpm install
+
+# Start desktop app in development mode
+pnpm tauri:dev
+
+# Build desktop app for distribution
+pnpm tauri:build
+```
+
+### First-Time Desktop Setup
+
+Install Rust if you haven't already:
+```bash
+# Install Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Restart your terminal, then verify
+rustc --version
+```
 
 ## 📊 Data Format
 
-The roadmap uses a simple markdown-like format:
+The roadmap uses a simple markdown-like format stored in `src/data/roadmap.md`:
 
 ```markdown
 # Q3/Q4 2025 Product Roadmap
@@ -54,6 +98,93 @@ The roadmap uses a simple markdown-like format:
 - **Mobile App v3.0**: Jul W1-Sep W2 | Mobile Team | hard-deadline: 2025-08-15 | deadline-label: App Release | color: #4F46E5
 ```
 
+## 📋 Roadmap Examples
+
+### Simple Roadmap
+
+Perfect for getting started - shows basic projects and milestones:
+
+```markdown
+# My Product Roadmap - Q3 2025
+
+## Streams
+
+### Frontend Team
+- **User Dashboard**: Jul W1-Aug W2 | Frontend Team | color: #3B82F6
+- **Mobile Responsive**: Aug W3-Sep W1 | Frontend Team | color: #06B6D4
+
+### Backend Team  
+- **API v2.0**: Jul W2-Aug W4 | Backend Team | color: #10B981
+- **Database Migration**: Sep W1-Sep W3 | Backend Team | color: #8B5CF6
+
+### Milestones
+- **Beta Release**: Aug W4 | hard-deadline: 2025-08-25 | color: #EF4444
+```
+
+### Complex Roadmap
+
+Showcases all features - team capacity, risks, multiple deadline types, and detailed planning:
+
+```markdown
+# Enterprise Platform Roadmap - Q3/Q4 2025
+
+## Team Capacity
+- **Alex Annual Leave**: Jul W3-Jul W4 | color: #FFA500
+- **Jordan Conference**: Aug W2-Aug W2 | color: #FF6B6B  
+- **Taylor Training**: Sep W1-Sep W2 | color: #9B59B6
+- **Summer Holidays**: Aug W1-Aug W3 | color: #FFB84D
+- **Q4 Planning Week**: Oct W1-Oct W1 | color: #A78BFA
+
+## Streams
+
+### Mobile Platform
+- **Risk: iOS 17 Compatibility**: Jul W1-Jul W3 | risk-level: high | color: #DC2626
+- **Mobile App v3.0**: Jul W1-Sep W2 | Mobile Team (4 devs) | hard-deadline: 2025-09-15 | deadline-label: App Store Release | color: #4F46E5
+- **Push Notifications**: Aug W1-Aug W4 | Mobile Team | color: #7C3AED
+- **Offline Sync**: Sep W3-Oct W2 | Mobile Team | soft-deadline: 2025-10-15 | deadline-label: V3.1 Release | color: #5B21B6
+
+### Analytics Platform
+- **Real-time Dashboard**: Jul W2-Aug W3 | Analytics Team (3 devs) | color: #059669
+- **Custom Reports Engine**: Aug W4-Oct W1 | Analytics Team | color: #047857
+- **Risk: Data Privacy Compliance**: Sep W1-Sep W4 | risk-level: medium | color: #F59E0B
+- **Advanced Analytics**: Oct W2-Nov W2 | Analytics Team | color: #065F46
+
+### Infrastructure
+- **Cloud Migration**: Jul W1-Sep W4 | DevOps Team (2 devs) | color: #DC2626
+- **Risk: Migration Downtime**: Aug W2-Aug W3 | risk-level: high | color: #991B1B
+- **Auto-scaling Setup**: Oct W1-Oct W4 | DevOps Team | color: #B91C1C
+- **Security Audit**: Nov W1-Nov W2 | Security Team | hard-deadline: 2025-11-15 | deadline-label: Compliance Deadline | color: #7F1D1D
+
+### Product Strategy
+- **Market Research**: Jul W1-Jul W4 | Product Team | color: #2563EB
+- **User Testing**: Aug W1-Aug W2 | Product Team | color: #1D4ED8
+- **Feature Prioritisation**: Aug W3-Aug W4 | Product Team | color: #1E40AF
+- **Q1 2026 Planning**: Oct W3-Nov W1 | Product Team | soft-deadline: 2025-11-01 | deadline-label: Board Presentation | color: #1E3A8A
+
+### Milestones
+- **Alpha Release**: Aug W1 | hard-deadline: 2025-08-01 | deadline-label: Internal Testing | color: #F59E0B
+- **Beta Release**: Sep W1 | hard-deadline: 2025-09-01 | deadline-label: Customer Preview | color: #EAB308
+- **Production Release**: Oct W1 | hard-deadline: 2025-10-01 | deadline-label: General Availability | color: #059669
+- **Post-launch Review**: Nov W1 | soft-deadline: 2025-11-01 | deadline-label: Lessons Learned | color: #0891B2
+```
+
+### Key Features Demonstrated
+
+**Simple Roadmap shows:**
+- Basic project streams and timelines
+- Team assignments
+- Simple milestone tracking
+- Clean color coding
+
+**Complex Roadmap shows:**
+- **Team Capacity Planning**: Leave, conferences, training, holidays
+- **Risk Management**: High/medium risk items with visual indicators
+- **Multiple Deadline Types**: Hard deadlines (must-hit) vs soft deadlines (target dates)
+- **Custom Labels**: Descriptive deadline labels for context
+- **Team Information**: Team names and sizes for resource planning
+- **Comprehensive Milestones**: Different types of releases and reviews
+- **Advanced Color Coding**: Strategic use of colors for visual grouping
+
 ### Supported Properties
 
 - **Timeline**: `Jul W1-Sep W2` (week ranges)
@@ -63,78 +194,85 @@ The roadmap uses a simple markdown-like format:
 - **Risks**: `risk-level: high|medium|low`
 - **Labels**: Custom `deadline-label` for milestone annotations
 
-## 📄 PDF Export
+## 📄 Export & File Management
 
-Generate high-quality PDFs of your roadmap for sharing and printing:
+### PDF Export (Web & Desktop)
 
-### Initial Setup (One-time)
+Generate high-quality PDFs for sharing and printing:
 
-First time using PDF export? Install Chrome for Puppeteer:
-
+#### Initial Setup (Web Only)
 ```bash
-# Option 1: Allow Puppeteer build scripts (recommended)
+# Allow Puppeteer build scripts (one-time setup)
 pnpm approve-builds
-# Select 'y' when prompted for puppeteer
 
-# Option 2: Manual Chrome installation
+# Or install Chrome manually
 npx puppeteer browsers install chrome
 ```
 
-### Generate PDFs
-
+#### Generate PDFs
 ```bash
-# Generate standard A4 portrait PDF
+# Standard A4 portrait
 pnpm pdf
 
-# Generate landscape orientation (recommended for wide roadmaps)
+# Landscape orientation (recommended for roadmaps)
 pnpm pdf:landscape
 
-# Generate A3 size for large roadmaps
+# Large format for detailed roadmaps
 pnpm pdf:a3
-
-# Custom options
-pnpm pdf --format=Letter --output=my-roadmap.pdf
-pnpm pdf --landscape --format=A3 --output=quarterly-roadmap.pdf
 ```
 
-### PDF Features
+### Desktop File Operations
 
-- **Paper Formats**: A4, A3, Letter, Legal, Tabloid
-- **Orientations**: Portrait and Landscape
-- **High Quality**: 2x resolution for crisp text and graphics
-- **Print Optimised**: Enhanced colors, borders, and text sizing
-- **Professional Layout**: Auto-generated headers with date, page numbering
-- **Full Color**: All timeline colors, backgrounds, and styling preserved
+The desktop app provides native file management:
+
+- **Open**: `Ctrl/Cmd + O` - Open roadmap files from your computer
+- **Save**: `Ctrl/Cmd + S` - Save current roadmap
+- **Save As**: `Ctrl/Cmd + Shift + S` - Save with new filename
+- **Export**: Built-in PDF generation with native save dialogs
 
 ### Screenshot Generation
 
-Generate high-resolution screenshots for documentation:
-
 ```bash
-# Generate screenshot for README/docs
+# Generate screenshot for documentation
 pnpm screenshot
 ```
 
-Files are saved with timestamps: `roadmap-2025-07-08T14-30-00.pdf`
+## 🎮 Controls & Navigation
 
-## 🎮 Controls
+### Universal Controls
+- **Mouse**: Scroll to pan, zoom controls in UI
+- **Keyboard**: Arrow keys to pan, `Ctrl/Cmd + +/-` to zoom
+- **Touch**: Pinch to zoom, swipe to pan (mobile/tablet)
 
-- **Mouse**: Scroll to pan, use zoom controls
-- **Keyboard**: Arrow keys to pan, Ctrl/Cmd + +/- to zoom
-- **Touch**: Pinch to zoom, swipe to pan (mobile)
+### Desktop-Specific Shortcuts
+- **File Operations**: Standard OS shortcuts (`Ctrl/Cmd + O/S/N`)
+- **Window Management**: Native window controls and full-screen support
+- **Performance**: Hardware-accelerated rendering
 
 ## 🏗️ Architecture
 
-The project follows clean architecture principles:
+### Technology Stack
+- **Frontend**: React 18.3 + Vite + Tailwind CSS
+- **Desktop Backend**: Rust + Tauri 1.5
+- **Testing**: Vitest + Testing Library
+- **Build**: Vite (web) + Tauri CLI (desktop)
 
+### Project Structure
 ```
-src/
-├── components/         # React UI components
-├── domain/             # Business logic and parsing
-├── data/               # Demo data and configuration
-├── hooks/              # Custom React hooks
-├── styles/             # Global CSS and Tailwind
-└── test/               # Test setup and utilities
+├── src/                    # React application source
+│   ├── components/         # UI components
+│   ├── domain/            # Business logic and parsing
+│   ├── data/              # Roadmap data and configuration
+│   ├── hooks/             # Custom React hooks
+│   └── styles/            # Global CSS and Tailwind
+├── src-tauri/             # Tauri desktop backend
+│   ├── src/               # Rust source code
+│   ├── icons/             # Application icons
+│   ├── Cargo.toml         # Rust dependencies
+│   └── tauri.conf.json    # Desktop app configuration
+├── scripts/               # Build and utility scripts
+├── docs/                  # Documentation and assets
+└── dist/                  # Built application
 ```
 
 ### Key Components
@@ -148,7 +286,7 @@ src/
 ## 🧪 Testing
 
 ```bash
-# Run tests
+# Run all tests
 pnpm test
 
 # Run with UI
@@ -156,22 +294,45 @@ pnpm test:ui
 
 # Coverage report
 pnpm test:coverage
-```
 
-Tests use a clean arrange/act/assert structure for maintainability.
+# Test desktop app compilation
+pnpm tauri:dev --no-run
+```
 
 ## 🚀 Deployment
 
-### Static Hosting (Recommended)
+### Web Deployment
 
 ```bash
-# Build for production
+# Build for web
 pnpm build
 
-# Deploy to Netlify, Vercel, or GitHub Pages
+# Deploy to static hosting
+# - Netlify: Drag dist/ folder or connect Git
+# - Vercel: Import project or use CLI
+# - GitHub Pages: Use dist/ folder
 ```
 
-### Docker
+### Desktop Distribution
+
+```bash
+# Build for current platform
+pnpm tauri:build
+
+# Cross-platform builds (advanced)
+pnpm tauri:build --target x86_64-pc-windows-msvc
+pnpm tauri:build --target aarch64-apple-darwin
+```
+
+#### Distribution Files
+
+After building, find your installers in `src-tauri/target/release/bundle/`:
+
+- **Windows**: `.msi` installer + portable `.exe`
+- **macOS**: `.dmg` disk image + `.app` bundle
+- **Linux**: `.deb` package + `.AppImage` portable
+
+### Docker (Web Only)
 
 ```dockerfile
 FROM node:18-alpine
@@ -186,37 +347,23 @@ CMD ["pnpm", "preview"]
 
 ## 🎨 Customisation
 
-### Colours
+### Data Customisation
 
-Modify the colour scheme directly in your `src/data/roadmap.md` file:
+Edit `src/data/roadmap.md` to customise your roadmap:
 
 ```markdown
-# Your Roadmap
+# Your Roadmap Title
 
 ## Streams
 
-### Your Stream
+### Your Stream Name
 - **Your Project**: Jul W1-Sep W2 | Your Team | color: #10B981
 - **Another Project**: Aug W1-Oct W2 | Another Team | color: #EF4444
 ```
 
-### Timeline Range
+### Styling Customisation
 
-Update quarters directly in your `src/data/roadmap.md` file:
-
-```markdown
-# Q1/Q2 2026 Roadmap
-
-## Streams
-
-### Your Stream
-- **Project Name**: Jan W1-Mar W4 | Team | color: #4F46E5
-- **Next Project**: Apr W1-Jun W4 | Team | color: #10B981
-```
-
-### Styling
-
-The project uses Tailwind CSS. Customise `tailwind.config.js` for your brand:
+Update `tailwind.config.js` for brand customisation:
 
 ```javascript
 theme: {
@@ -229,21 +376,97 @@ theme: {
 },
 ```
 
+### Desktop App Customisation
+
+Edit `src-tauri/tauri.conf.json`:
+
+```json
+{
+  "package": {
+    "productName": "Your Roadmap Tool",
+    "version": "1.0.0"
+  },
+  "tauri": {
+    "windows": [{
+      "title": "Your Custom Title",
+      "width": 1400,
+      "height": 900
+    }]
+  }
+}
+```
+
+## 🛠️ Development Commands
+
+### Web Development
+```bash
+pnpm dev              # Start development server
+pnpm build            # Build for production
+pnpm preview          # Preview production build
+pnpm test             # Run tests
+```
+
+### Desktop Development
+```bash
+pnpm tauri:dev        # Start desktop app in dev mode
+pnpm tauri:build      # Build desktop app for distribution
+pnpm tauri:icon       # Generate app icons from source image
+pnpm tauri            # Access Tauri CLI directly
+```
+
+### Utility Commands
+```bash
+pnpm pdf              # Generate PDF export
+pnpm screenshot       # Generate documentation screenshot
+pnpm lint             # Run ESLint
+pnpm test:coverage    # Run tests with coverage
+```
+
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Follow the existing code style and testing patterns
-4. Update documentation and generate screenshots if needed:
+4. Test both web and desktop versions:
    ```bash
-   # Generate updated screenshot for README
+   # Test web version
+   pnpm dev
+   
+   # Test desktop version
+   pnpm tauri:dev
+   ```
+5. Update documentation and generate screenshots:
+   ```bash
    pnpm screenshot
    ```
-5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
+6. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Open a Pull Request
 
+### Development Tips
 
+- Use `pnpm tauri:dev` for desktop development (hot reload included)
+- Test file operations in desktop mode with actual save/load workflows
+- Verify both web and desktop exports work correctly
+- Use `pnpm tauri:build` to test production desktop builds
+
+## 📋 Requirements
+
+### For Web Development
+- Node.js 18+
+- pnpm package manager
+
+### For Desktop Development
+- Everything above, plus:
+- Rust 1.70+
+- Platform-specific build tools:
+  - **Windows**: Microsoft C++ Build Tools
+  - **macOS**: Xcode Command Line Tools
+  - **Linux**: `build-essential` package
+
+### For Cross-Platform Building
+- Docker (optional, for Linux builds on other platforms)
+- Platform-specific SDKs for signing and notarisation
 
 ## 📄 License
 
@@ -251,9 +474,10 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Built with React and Tailwind CSS
+- Built with [React](https://react.dev/) and [Tauri](https://tauri.app/)
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
+- Desktop functionality powered by [Rust](https://rust-lang.org/)
 - Inspired by modern project management tools
-- Designed for simplicity and extensibility
 
 ---
 
@@ -262,3 +486,5 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - **Issues**: [GitHub Issues](https://github.com/your-username/roadmap-planner/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-username/roadmap-planner/discussions)
 - **Documentation**: [Wiki](https://github.com/your-username/roadmap-planner/wiki)
+
+**Choose Your Platform**: 🌐 [**Try Web Version**](https://your-demo-url.com) | 🖥️ [**Download Desktop App**](https://github.com/your-username/roadmap-planner/releases)
