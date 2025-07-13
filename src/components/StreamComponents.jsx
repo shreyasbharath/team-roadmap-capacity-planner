@@ -84,8 +84,13 @@ export const MilestonesRow = ({ milestones, weeks, currentWeekIndex }) => {
         {weeks.map((week, weekIndex) => {
           const weekMilestones = processedMilestones.filter(m => m.weekIndex === weekIndex);
           
+          // Use appropriate key based on object type
+          // For daily view: week is a day object with .label property
+          // For weekly view: week is a string
+          const key = typeof week === 'object' && week.label ? week.label : week;
+          
           return (
-            <div key={week} className="relative w-16 border-r border-gray-200 bg-purple-50" style={{ minHeight: '2.5rem' }}>
+            <div key={key} className="relative w-16 border-r border-gray-200 bg-purple-50" style={{ minHeight: '2.5rem' }}>
               {weekIndex === currentWeekIndex && (
                 <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
               )}
@@ -141,8 +146,13 @@ export const StreamMilestonesRow = ({ weeks, currentWeekIndex, hardDeadlines, so
         const weekSoftDeadlines = softDeadlines.filter(d => d.weekIndex === weekIndex);
         const weekHasDeadlines = weekHardDeadlines.length > 0 || weekSoftDeadlines.length > 0;
         
+        // Use appropriate key based on object type
+        // For daily view: week is a day object with .label property  
+        // For weekly view: week is a string
+        const key = typeof week === 'object' && week.label ? week.label : week;
+        
         return (
-          <div key={week} className="relative w-16 border-r border-gray-200 bg-yellow-50" style={{ minHeight: '2.5rem' }}>
+          <div key={key} className="relative w-16 border-r border-gray-200 bg-yellow-50" style={{ minHeight: '2.5rem' }}>
             {weekIndex === currentWeekIndex && (
               <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
             )}
@@ -205,8 +215,13 @@ export const RisksRow = ({ weeks, currentWeekIndex, risks }) => (
           return weekIndex >= start && weekIndex <= end;
         });
         
+        // Use appropriate key based on object type
+        // For daily view: week is a day object with .label property
+        // For weekly view: week is a string
+        const key = typeof week === 'object' && week.label ? week.label : week;
+        
         return (
-          <div key={week} className="relative w-16 border-r border-gray-200 bg-red-50" style={{ minHeight: '2.5rem' }}>
+          <div key={key} className="relative w-16 border-r border-gray-200 bg-red-50" style={{ minHeight: '2.5rem' }}>
             {weekIndex === currentWeekIndex && (
               <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
             )}

@@ -46,9 +46,22 @@ export const StreamItem = ({
   currentWeekIndex, 
   hardDeadlines, 
   softDeadlines, 
-  risks 
+  risks,
+  granularity = 'weekly'
 }) => {
-  const { start, end } = parseTimelineRange(item.timeline, weeks);
+  // Use different positioning logic based on granularity
+  let start, end;
+  
+  if (granularity === 'daily') {
+    // For daily view, use the pre-calculated startDay/endDay indices
+    start = item.startDay || 0;
+    end = item.endDay || 0;
+  } else {
+    // For weekly/quarterly view, use the traditional parsing
+    const timelineRange = parseTimelineRange(item.timeline, weeks);
+    start = timelineRange.start;
+    end = timelineRange.end;
+  }
   
   return (
     <div className="flex border-b border-gray-200 min-h-12 relative bg-white" data-testid="stream-item">
@@ -73,9 +86,14 @@ export const StreamItem = ({
             return weekIndex >= start && weekIndex <= end;
           });
           
+          // Use appropriate key based on object type
+          // For daily view: week is a day object with .label property
+          // For weekly view: week is a string
+          const key = typeof week === 'object' && week.label ? week.label : week;
+          
           return (
             <WeekCell
-              key={week}
+              key={key}
               week={week}
               weekIndex={weekIndex}
               currentWeekIndex={currentWeekIndex}

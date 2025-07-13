@@ -5,8 +5,20 @@ import { parseTimelineRange } from '../domain/timelineParser.js';
 /**
  * Renders a single capacity bar
  */
-export const CapacityBar = ({ capacity, weeks }) => {
-  const { start, end } = parseTimelineRange(capacity.timeline, weeks);
+export const CapacityBar = ({ capacity, weeks, granularity = 'weekly' }) => {
+  // Use different positioning logic based on granularity
+  let start, end;
+  
+  if (granularity === 'daily') {
+    // For daily view, use the pre-calculated startDay/endDay indices
+    start = capacity.startDay || 0;
+    end = capacity.endDay || 0;
+  } else {
+    // For weekly/quarterly view, use the traditional parsing
+    const timelineRange = parseTimelineRange(capacity.timeline, weeks);
+    start = timelineRange.start;
+    end = timelineRange.end;
+  }
   
   return (
     <div
@@ -31,7 +43,7 @@ export const CapacityBar = ({ capacity, weeks }) => {
 /**
  * Renders the team capacity row
  */
-export const TeamCapacityRow = ({ teamCapacity, weeks, currentWeekIndex }) => {
+export const TeamCapacityRow = ({ teamCapacity, weeks, currentWeekIndex, granularity = 'weekly' }) => {
   if (!teamCapacity || teamCapacity.length === 0) {
     return null;
   }
@@ -44,21 +56,29 @@ export const TeamCapacityRow = ({ teamCapacity, weeks, currentWeekIndex }) => {
         </div>
         <div className="flex relative overflow-visible" style={{ minHeight: '3rem' }}>
           {/* Week cells */}
-          {weeks.map((week, weekIndex) => (
-            <div key={week} className="relative w-16 border-r border-gray-100 bg-orange-50" style={{ minHeight: '3rem' }}>
-              {/* Current Date Line */}
-              {weekIndex === currentWeekIndex && (
-                <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
-              )}
-            </div>
-          ))}
+          {weeks.map((week, weekIndex) => {
+            // Use appropriate key based on object type
+            // For daily view: week is a day object with .label property
+            // For weekly view: week is a string
+            const key = typeof week === 'object' && week.label ? week.label : week;
+            
+            return (
+              <div key={key} className="relative w-16 border-r border-gray-100 bg-orange-50" style={{ minHeight: '3rem' }}>
+                {/* Current Date Line */}
+                {weekIndex === currentWeekIndex && (
+                  <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
+                )}
+              </div>
+            );
+          })}
           
           {/* Capacity bars */}
           {teamCapacity.map((capacity, capacityIndex) => (
             <CapacityBar 
               key={capacityIndex} 
               capacity={capacity} 
-              weeks={weeks} 
+              weeks={weeks}
+              granularity={granularity}
             />
           ))}
         </div>

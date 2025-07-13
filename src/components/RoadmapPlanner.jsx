@@ -5,9 +5,13 @@ import {
   getCurrentWeek, 
   parseMarkdown 
 } from '../domain/timelineParser.js';
+import { 
+  parseSprintMarkdown,
+  determineTimelineGranularity
+} from '../domain/adaptiveTimelineScaling.js';
 import { QUARTERS_CONFIG } from '../data/demoData.js';
 import roadmapData from '../data/roadmap.md?raw';
-import { TimelineHeader, MonthHeaders, WeekHeaders } from './TimelineHeader.jsx';
+import { TimelineHeader, MonthHeaders, WeekHeaders, DayHeaders } from './TimelineHeader.jsx';
 import { TeamCapacityRow } from './TeamCapacity.jsx';
 import { MilestonesRow } from './StreamComponents.jsx';
 import { StreamContainer } from './StreamContainer.jsx';
@@ -34,18 +38,39 @@ export const RoadmapPlanner = ({
   const [showPanHint, setShowPanHint] = useState(true);
   const containerRef = useRef(null);
   
-  // Generate timeline data
-  const weeks = generateWeeks(quarters);
-  const currentWeek = getCurrentWeek(weeks);
-  const currentWeekIndex = weeks.indexOf(currentWeek);
+  // Determine timeline granularity and parse data accordingly
+  const granularityResult = determineTimelineGranularity(markdownData);
+  const { granularity, config: timelineConfig } = granularityResult;
+  
+  let weeks, currentWeek, currentWeekIndex, streams, teamCapacity, milestones;
+  
+  if (granularity === 'daily') {
+    // Use adaptive timeline scaling for daily view
+    const parseResult = parseSprintMarkdown(markdownData);
+    streams = parseResult.streams;
+    teamCapacity = parseResult.teamCapacity;
+    milestones = parseResult.milestones;
+    
+    // For daily view, we don't use traditional weeks but days
+    weeks = timelineConfig.days || [];
+    currentWeek = null; // Not applicable for daily view
+    currentWeekIndex = -1;
+  } else {
+    // Use traditional parsing for weekly/quarterly views
+    weeks = generateWeeks(quarters);
+    currentWeek = getCurrentWeek(weeks);
+    currentWeekIndex = weeks.indexOf(currentWeek);
+    const parseResult = parseMarkdown(markdownData);
+    streams = parseResult.streams;
+    teamCapacity = parseResult.teamCapacity;
+    milestones = parseResult.milestones;
+  }
+  
   const currentDate = new Date().toLocaleDateString('en-AU', { 
     day: 'numeric', 
     month: 'short', 
     year: 'numeric' 
   });
-  
-  // Parse roadmap data
-  const { streams, teamCapacity, milestones } = parseMarkdown(markdownData);
   
   // Zoom functionality
   const { zoom, zoomIn, zoomOut, resetZoom } = useZoom();
@@ -101,14 +126,34 @@ export const RoadmapPlanner = ({
             transition: 'transform 0.2s ease-out'
           }}
         >
-          <TimelineHeader quarters={quarters} />
-          <MonthHeaders quarters={quarters} />
-          <WeekHeaders weeks={weeks} currentWeekIndex={currentWeekIndex} />
+          {granularity === 'daily' ? (
+            // Daily view headers
+            <>
+              <div className="flex border-b-2 border-gray-300">
+                <div className="w-48 bg-blue-600 text-white font-bold p-2 border-r-2 border-gray-300">
+                  Sprint View
+                </div>
+                <div className="bg-blue-500 text-white text-center font-semibold p-2" 
+                     style={{ width: `${weeks.length * 4}rem` }}>
+                  Daily Timeline
+                </div>
+              </div>
+              <DayHeaders days={weeks} />
+            </>
+          ) : (
+            // Traditional quarterly/weekly view headers
+            <>
+              <TimelineHeader quarters={quarters} />
+              <MonthHeaders quarters={quarters} />
+              <WeekHeaders weeks={weeks} currentWeekIndex={currentWeekIndex} />
+            </>
+          )}
           
           <TeamCapacityRow 
             teamCapacity={teamCapacity}
             weeks={weeks}
             currentWeekIndex={currentWeekIndex}
+            granularity={granularity}
           />
           
           {/* Milestones Section */}
@@ -117,6 +162,7 @@ export const RoadmapPlanner = ({
               milestones={milestones}
               weeks={weeks}
               currentWeekIndex={currentWeekIndex}
+              granularity={granularity}
             />
           )}
           
@@ -127,6 +173,7 @@ export const RoadmapPlanner = ({
                 stream={stream}
                 weeks={weeks}
                 currentWeekIndex={currentWeekIndex}
+                granularity={granularity}
               />
             ))}
           </div>
@@ -138,6 +185,8 @@ export const RoadmapPlanner = ({
               milestones={milestones}
               currentWeek={currentWeek}
               currentDate={currentDate}
+              granularity={granularity}
+              timelineConfig={timelineConfig}
             />
           )}
         </div>

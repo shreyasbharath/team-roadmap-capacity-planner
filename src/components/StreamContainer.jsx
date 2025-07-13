@@ -11,7 +11,7 @@ import { StreamItem } from './StreamItem.jsx';
 /**
  * Container component for a single stream with all its components
  */
-export const StreamContainer = ({ stream, weeks, currentWeekIndex }) => {
+export const StreamContainer = ({ stream, weeks, currentWeekIndex, granularity = 'weekly' }) => {
   const { hardDeadlines, softDeadlines } = processStreamDeadlines(stream.items, weeks);
   const hasDeadlines = hardDeadlines.length > 0 || softDeadlines.length > 0;
   const hasRisks = stream.risks && stream.risks.length > 0;
@@ -50,6 +50,7 @@ export const StreamContainer = ({ stream, weeks, currentWeekIndex }) => {
           hardDeadlines={hardDeadlines}
           softDeadlines={softDeadlines}
           risks={stream.risks}
+          granularity={granularity}
         />
       ))}
     </div>
