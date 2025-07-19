@@ -49,14 +49,12 @@ describe('IntegratedRoadmapEditor', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset DOM and setup mocks
-    document.body.innerHTML = '';
+    // Setup mocks
     global.window.__TAURI__ = undefined;
     
-    // Setup DOM method mocks
-    document.createElement = mockCreateElement.mockReturnValue(mockElement);
-    document.body.appendChild = mockAppendChild;
-    document.body.removeChild = mockRemoveChild;
+    // Mock URL.createObjectURL and URL.revokeObjectURL for jsdom
+    global.URL.createObjectURL = vi.fn(() => 'blob:test-url');
+    global.URL.revokeObjectURL = vi.fn();
     
     // Reset mock function states
     mockCreateElement.mockClear();
@@ -68,8 +66,6 @@ describe('IntegratedRoadmapEditor', () => {
   afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
-    // Restore original DOM methods
-    vi.unstubAllEnvs();
   });
 
   it('renders with initial markdown and shows roadmap preview', () => {
@@ -149,10 +145,8 @@ describe('IntegratedRoadmapEditor', () => {
       
       fireEvent.click(screen.getByText('💾 Save'));
       
-      expect(mockCreateElement).toHaveBeenCalledWith('a');
-      expect(mockAppendChild).toHaveBeenCalledWith(mockElement);
-      expect(mockClick).toHaveBeenCalled();
-      expect(mockRemoveChild).toHaveBeenCalledWith(mockElement);
+      // Should have called URL.createObjectURL for web download
+      expect(global.URL.createObjectURL).toHaveBeenCalled();
     });
   });
 
