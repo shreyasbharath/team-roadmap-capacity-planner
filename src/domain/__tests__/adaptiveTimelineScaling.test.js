@@ -1,5 +1,4 @@
-// src/domain/__tests__/adaptiveTimelineScaling.test.js
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   determineTimelineGranularity,
   generateDailyTimeline,
@@ -249,7 +248,7 @@ describe('Adaptive Timeline Scaling', () => {
       expect(result.streams).toHaveLength(1);
       expect(result.streams[0].items).toHaveLength(2);
       expect(result.teamCapacity).toHaveLength(1);
-      
+
       // Check timeline parsing with daily indices
       const mobileApp = result.streams[0].items[0];
       expect(mobileApp.timeline).toBeDefined();
@@ -463,7 +462,7 @@ describe('Adaptive Timeline Scaling', () => {
       expect(parsed.streams).toHaveLength(2);
       expect(parsed.teamCapacity).toHaveLength(2);
       expect(parsed.milestones).toHaveLength(1);
-      
+
       // All items should have daily indices
       parsed.streams.forEach(stream => {
         stream.items.forEach(item => {

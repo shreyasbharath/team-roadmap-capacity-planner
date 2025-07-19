@@ -1,10 +1,8 @@
-// src/components/StreamContainer.jsx
-import React from 'react';
-import { 
-  StreamHeader, 
-  StreamMilestonesRow, 
-  RisksRow, 
-  processStreamDeadlines 
+import {
+  StreamHeader,
+  StreamMilestonesRow,
+  RisksRow,
+  processStreamDeadlines
 } from './StreamComponents.jsx';
 import { StreamItem } from './StreamItem.jsx';
 
@@ -18,14 +16,14 @@ export const StreamContainer = ({ stream, weeks, currentWeekIndex, granularity =
 
   return (
     <div className="mb-4 overflow-visible" data-testid="stream-container">
-      <StreamHeader 
+      <StreamHeader
         streamName={stream.name}
         itemCount={stream.items.length}
         riskCount={stream.risks ? stream.risks.length : 0}
       />
 
       {hasDeadlines && (
-        <StreamMilestonesRow 
+        <StreamMilestonesRow
           weeks={weeks}
           currentWeekIndex={currentWeekIndex}
           hardDeadlines={hardDeadlines}
@@ -34,13 +32,13 @@ export const StreamContainer = ({ stream, weeks, currentWeekIndex, granularity =
       )}
 
       {hasRisks && (
-        <RisksRow 
+        <RisksRow
           weeks={weeks}
           currentWeekIndex={currentWeekIndex}
           risks={stream.risks}
         />
       )}
-      
+
       {stream.items.map((item, itemIndex) => (
         <StreamItem
           key={itemIndex}

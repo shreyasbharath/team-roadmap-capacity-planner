@@ -1,35 +1,33 @@
-// src/components/StreamItem.jsx
-import React from 'react';
 import { parseTimelineRange } from '../domain/timelineParser.js';
-import { TooltipWrapper, TimelineBar } from './StreamComponents.jsx';
+import { TooltipWrapper } from './StreamComponents.jsx';
 
 /**
  * Renders a week cell with vertical indicator lines
  */
-export const WeekCell = ({ 
-  week, 
-  weekIndex, 
-  currentWeekIndex, 
-  hasHardDeadline, 
-  hasSoftDeadline, 
-  hasRisk 
+export const WeekCell = ({
+  week,
+  weekIndex,
+  currentWeekIndex,
+  hasHardDeadline,
+  hasSoftDeadline,
+  hasRisk
 }) => (
   <div key={week} className="relative w-16 border-r border-gray-100" data-testid="week-cell" style={{ minHeight: '3rem' }}>
     {/* Current Date Line */}
     {weekIndex === currentWeekIndex && (
       <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
     )}
-    
+
     {/* Hard Deadline Lines */}
     {hasHardDeadline && (
       <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dashed border-red-500" />
     )}
-    
+
     {/* Soft Deadline Lines */}
     {hasSoftDeadline && (
       <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dashed border-blue-500" />
     )}
-    
+
     {/* Risk Lines */}
     {hasRisk && (
       <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-red-600" />
@@ -40,18 +38,18 @@ export const WeekCell = ({
 /**
  * Renders a stream item row with timeline bar
  */
-export const StreamItem = ({ 
-  item, 
-  weeks, 
-  currentWeekIndex, 
-  hardDeadlines, 
-  softDeadlines, 
+export const StreamItem = ({
+  item,
+  weeks,
+  currentWeekIndex,
+  hardDeadlines,
+  softDeadlines,
   risks,
   granularity = 'weekly'
 }) => {
   // Use different positioning logic based on granularity
   let start, end;
-  
+
   if (granularity === 'daily') {
     // For daily view, use the pre-calculated startDay/endDay indices
     start = item.startDay || 0;
@@ -62,7 +60,7 @@ export const StreamItem = ({
     start = timelineRange.start;
     end = timelineRange.end;
   }
-  
+
   return (
     <div className="flex border-b border-gray-200 min-h-12 relative bg-white" data-testid="stream-item">
       <TooltipWrapper text={`Team: ${item.team}`}>
@@ -70,10 +68,10 @@ export const StreamItem = ({
           <span className="truncate block">{item.team}</span>
         </div>
       </TooltipWrapper>
-      
-      <div 
-        className="flex relative overflow-visible" 
-        style={{ 
+
+      <div
+        className="flex relative overflow-visible"
+        style={{
           minHeight: '3rem'
         }}
       >
@@ -85,12 +83,12 @@ export const StreamItem = ({
             const { start, end } = parseTimelineRange(risk.timeline, weeks);
             return weekIndex >= start && weekIndex <= end;
           });
-          
+
           // Use appropriate key based on object type
           // For daily view: week is a day object with .label property
           // For weekly view: week is a string
           const key = typeof week === 'object' && week.label ? week.label : week;
-          
+
           return (
             <WeekCell
               key={key}
@@ -103,7 +101,7 @@ export const StreamItem = ({
             />
           );
         })}
-        
+
         {/* Timeline bar positioned absolutely within the timeline container */}
         <div
           className="absolute top-1 rounded text-white text-sm font-medium flex items-center justify-start px-2 overflow-hidden cursor-help"

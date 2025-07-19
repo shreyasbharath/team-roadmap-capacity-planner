@@ -1,5 +1,3 @@
-// src/App.jsx
-import React from 'react';
 import { RoadmapPlanner } from './components/RoadmapPlanner.jsx';
 import './styles/globals.css';
 

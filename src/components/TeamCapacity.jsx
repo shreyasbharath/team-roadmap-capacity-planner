@@ -1,5 +1,3 @@
-// src/components/TeamCapacity.jsx
-import React from 'react';
 import { parseTimelineRange } from '../domain/timelineParser.js';
 
 /**
@@ -8,7 +6,7 @@ import { parseTimelineRange } from '../domain/timelineParser.js';
 export const CapacityBar = ({ capacity, weeks, granularity = 'weekly' }) => {
   // Use different positioning logic based on granularity
   let start, end;
-  
+
   if (granularity === 'daily') {
     // For daily view, use the pre-calculated startDay/endDay indices
     start = capacity.startDay || 0;
@@ -19,7 +17,7 @@ export const CapacityBar = ({ capacity, weeks, granularity = 'weekly' }) => {
     start = timelineRange.start;
     end = timelineRange.end;
   }
-  
+
   return (
     <div
       className="absolute top-1 rounded text-white text-sm font-medium flex items-center justify-start px-2 overflow-hidden cursor-help"
@@ -61,7 +59,7 @@ export const TeamCapacityRow = ({ teamCapacity, weeks, currentWeekIndex, granula
             // For daily view: week is a day object with .label property
             // For weekly view: week is a string
             const key = typeof week === 'object' && week.label ? week.label : week;
-            
+
             return (
               <div key={key} className="relative w-16 border-r border-gray-100 bg-orange-50" style={{ minHeight: '3rem' }}>
                 {/* Current Date Line */}
@@ -71,12 +69,12 @@ export const TeamCapacityRow = ({ teamCapacity, weeks, currentWeekIndex, granula
               </div>
             );
           })}
-          
+
           {/* Capacity bars */}
           {teamCapacity.map((capacity, capacityIndex) => (
-            <CapacityBar 
-              key={capacityIndex} 
-              capacity={capacity} 
+            <CapacityBar
+              key={capacityIndex}
+              capacity={capacity}
               weeks={weeks}
               granularity={granularity}
             />

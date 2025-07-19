@@ -1,11 +1,11 @@
 // src/components/RoadmapPlanner.jsx
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  generateWeeks, 
-  getCurrentWeek, 
-  parseMarkdown 
+import { useState, useEffect, useRef } from 'react';
+import {
+  generateWeeks,
+  getCurrentWeek,
+  parseMarkdown
 } from '../domain/timelineParser.js';
-import { 
+import {
   parseSprintMarkdown,
   determineTimelineGranularity
 } from '../domain/adaptiveTimelineScaling.js';
@@ -15,20 +15,20 @@ import { TimelineHeader, MonthHeaders, WeekHeaders, DayHeaders } from './Timelin
 import { TeamCapacityRow } from './TeamCapacity.jsx';
 import { MilestonesRow } from './StreamComponents.jsx';
 import { StreamContainer } from './StreamContainer.jsx';
-import { 
-  useZoom, 
-  ZoomControls, 
-  HelpPanel, 
-  LoadingSpinner, 
-  PanHint, 
-  DebugInfo 
+import {
+  useZoom,
+  ZoomControls,
+  HelpPanel,
+  LoadingSpinner,
+  PanHint,
+  DebugInfo
 } from './NavigationControls.jsx';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation.js';
 
 /**
  * Main roadmap planner component
  */
-export const RoadmapPlanner = ({ 
+export const RoadmapPlanner = ({
   markdownData = roadmapData,
   quarters = QUARTERS_CONFIG,
   enableDebug = false,
@@ -37,20 +37,20 @@ export const RoadmapPlanner = ({
   const [loading, setLoading] = useState(true);
   const [showPanHint, setShowPanHint] = useState(true);
   const containerRef = useRef(null);
-  
+
   // Determine timeline granularity and parse data accordingly
   const granularityResult = determineTimelineGranularity(markdownData);
   const { granularity, config: timelineConfig } = granularityResult;
-  
+
   let weeks, currentWeek, currentWeekIndex, streams, teamCapacity, milestones;
-  
+
   if (granularity === 'daily') {
     // Use adaptive timeline scaling for daily view
     const parseResult = parseSprintMarkdown(markdownData);
     streams = parseResult.streams;
     teamCapacity = parseResult.teamCapacity;
     milestones = parseResult.milestones;
-    
+
     // For daily view, we don't use traditional weeks but days
     weeks = timelineConfig.days || [];
     currentWeek = null; // Not applicable for daily view
@@ -65,16 +65,16 @@ export const RoadmapPlanner = ({
     teamCapacity = parseResult.teamCapacity;
     milestones = parseResult.milestones;
   }
-  
-  const currentDate = new Date().toLocaleDateString('en-AU', { 
-    day: 'numeric', 
-    month: 'short', 
-    year: 'numeric' 
+
+  const currentDate = new Date().toLocaleDateString('en-AU', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
   });
-  
+
   // Zoom functionality
   const { zoom, zoomIn, zoomOut, resetZoom } = useZoom();
-  
+
   // Keyboard navigation
   useKeyboardNavigation({
     containerRef,
@@ -100,7 +100,7 @@ export const RoadmapPlanner = ({
     <div className="w-full h-screen bg-gray-50 relative">
       {/* Controls */}
       <div className="no-print fixed top-4 right-4 z-50 flex flex-col gap-2">
-        <ZoomControls 
+        <ZoomControls
           zoom={zoom}
           zoomIn={zoomIn}
           zoomOut={zoomOut}
@@ -112,15 +112,15 @@ export const RoadmapPlanner = ({
       <PanHint show={showPanHint} />
 
       {/* Main Content */}
-      <div 
+      <div
         ref={containerRef}
         className="w-full h-full overflow-auto p-4"
         style={{ backgroundColor: '#f8fafc' }}
       >
-        <div 
+        <div
           className="roadmap-container min-w-max bg-white rounded-lg shadow-lg border"
           data-testid="roadmap-container"
-          style={{ 
+          style={{
             transform: `scale(${zoom})`,
             transformOrigin: 'top left',
             transition: 'transform 0.2s ease-out'
@@ -131,9 +131,9 @@ export const RoadmapPlanner = ({
             <>
               <div className="flex border-b-2 border-gray-300">
                 <div className="w-48 bg-blue-600 text-white font-bold p-2 border-r-2 border-gray-300">
-                  Sprint View
+                  Daily View
                 </div>
-                <div className="bg-blue-500 text-white text-center font-semibold p-2" 
+                <div className="bg-blue-500 text-white text-center font-semibold p-2"
                      style={{ width: `${weeks.length * 4}rem` }}>
                   Daily Timeline
                 </div>
@@ -148,14 +148,14 @@ export const RoadmapPlanner = ({
               <WeekHeaders weeks={weeks} currentWeekIndex={currentWeekIndex} />
             </>
           )}
-          
-          <TeamCapacityRow 
+
+          <TeamCapacityRow
             teamCapacity={teamCapacity}
             weeks={weeks}
             currentWeekIndex={currentWeekIndex}
             granularity={granularity}
           />
-          
+
           {/* Milestones Section */}
           {milestones && milestones.length > 0 && (
             <MilestonesRow
@@ -165,7 +165,7 @@ export const RoadmapPlanner = ({
               granularity={granularity}
             />
           )}
-          
+
           <div className="relative overflow-visible" data-testid="streams-container">
             {streams.map((stream, streamIndex) => (
               <StreamContainer
@@ -179,7 +179,7 @@ export const RoadmapPlanner = ({
           </div>
 
           {enableDebug && (
-            <DebugInfo 
+            <DebugInfo
               streams={streams}
               teamCapacity={teamCapacity}
               milestones={milestones}

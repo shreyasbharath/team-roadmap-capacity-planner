@@ -1,9 +1,6 @@
-// src/components/__tests__/RoadmapPlanner.integration.test.jsx
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { RoadmapPlanner } from '../RoadmapPlanner.jsx';
-import { vi } from 'vitest';
 
 // Mock roadmap data for testing - using correct markdown format
 const mockRoadmapData = `

@@ -1,6 +1,4 @@
-// __tests__/visual/timeline-bars.test.jsx
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { TimelineBar } from '../StreamComponents.jsx';
 
@@ -9,13 +7,13 @@ vi.mock('../../domain/timelineParser.js', () => ({
   parseTimelineRange: vi.fn((timeline, weeks) => {
     // Mock implementation that matches the real logic
     if (!timeline) return { start: 0, end: 0 };
-    
+
     const parts = timeline.split('-');
     if (parts.length !== 2) return { start: 0, end: 0 };
-    
+
     const startIndex = weeks.indexOf(parts[0].trim());
     const endIndex = weeks.indexOf(parts[1].trim());
-    
+
     return {
       start: startIndex >= 0 ? startIndex : 0,
       end: endIndex >= 0 ? endIndex : 0
@@ -73,10 +71,10 @@ describe('Timeline Bars Visual Tests', () => {
       );
 
       const timelineBar = container.querySelector('[class*="absolute"]');
-      
+
       expect(timelineBar).toBeInTheDocument();
       expect(timelineBar).toHaveTextContent(name);
-      
+
       // Check positioning and dimensions using inline styles
       expect(timelineBar.style.position).toBe('absolute');
       expect(timelineBar.style.left).toBe(expectedLeft);
@@ -126,7 +124,7 @@ describe('Timeline Bars Visual Tests', () => {
       );
 
       const timelineBar = container.querySelector('[class*="absolute"]');
-      
+
       expect(timelineBar).toBeInTheDocument();
       const style = timelineBar.style;
       expect(style.left).toBe(expectedLeft);
@@ -150,7 +148,7 @@ describe('Timeline Bars Visual Tests', () => {
     );
 
     const timelineBar = container.querySelector('[class*="absolute"]');
-    
+
     // Check required CSS classes
     expect(timelineBar).toHaveClass('absolute');
     expect(timelineBar).toHaveClass('top-1');
@@ -162,7 +160,7 @@ describe('Timeline Bars Visual Tests', () => {
     expect(timelineBar).toHaveClass('items-center');
     expect(timelineBar).toHaveClass('justify-start');
     expect(timelineBar).toHaveClass('cursor-help');
-    
+
     // Check inline styles
     expect(timelineBar.style.position).toBe('absolute');
     expect(timelineBar.style.height).toBe('2rem');
@@ -191,9 +189,9 @@ describe('Timeline Bars Visual Tests', () => {
     );
 
     const timelineBars = container.querySelectorAll('[class*="absolute"]');
-    
+
     expect(timelineBars).toHaveLength(3);
-    
+
     // Check that each bar has a different left position
     const leftPositions = Array.from(timelineBars).map(bar => bar.style.left);
     expect(leftPositions).toEqual(['16rem', '32rem', '48rem']);
@@ -215,7 +213,7 @@ describe('Timeline Bars Visual Tests', () => {
     );
 
     const timelineBar = container.querySelector('[class*="absolute"]');
-    
+
     // These values should match the fixed calculation:
     // Jul W1 is index 4, so left = 4 * 4 = 16rem
     // Jul W1 to Sep W2 is 10 weeks, so width = 10 * 4 = 40rem

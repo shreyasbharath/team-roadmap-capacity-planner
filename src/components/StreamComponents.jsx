@@ -1,5 +1,3 @@
-// src/components/StreamComponents.jsx
-import React from 'react';
 import { parseTimelineRange, parseDeadlineDate } from '../domain/timelineParser.js';
 
 /**
@@ -31,13 +29,12 @@ export const StreamHeader = ({ streamName, itemCount, riskCount }) => (
  */
 export const MilestoneAnnotation = ({ milestone }) => {
   const isHardDate = milestone.hardDate;
-  const isSoftDate = milestone.softDate;
   const bgColor = isHardDate ? 'bg-red-500 border-red-600' : 'bg-blue-500 border-blue-600';
   const tooltipPrefix = isHardDate ? 'Hard Milestone' : 'Soft Milestone';
   const date = isHardDate ? milestone.hardDate : milestone.softDate;
-  
+
   return (
-    <TooltipWrapper 
+    <TooltipWrapper
       text={`${tooltipPrefix}: ${date} - ${milestone.name}`}
     >
       <div className={`${bgColor} text-white text-xs px-1 py-0.5 rounded shadow-sm border mb-0.5 max-w-14 text-center cursor-help`}>
@@ -60,21 +57,21 @@ export const MilestonesRow = ({ milestones, weeks, currentWeekIndex }) => {
   const processedMilestones = milestones.map(milestone => {
     const date = milestone.hardDate || milestone.softDate;
     if (!date) return null;
-    
+
     const weekIndex = parseDeadlineDate(date, weeks);
     if (weekIndex === null) return null;
-    
+
     return {
       ...milestone,
       weekIndex,
       date,
-      formattedDate: new Date(date).toLocaleDateString('en-AU', { 
-        day: 'numeric', 
-        month: 'short' 
+      formattedDate: new Date(date).toLocaleDateString('en-AU', {
+        day: 'numeric',
+        month: 'short'
       })
     };
   }).filter(Boolean);
-  
+
   return (
     <div className="flex border-b-2 border-gray-400 bg-purple-50">
       <div className="w-48 p-2 border-r border-gray-300 text-sm font-medium bg-purple-100 text-gray-700">
@@ -83,18 +80,18 @@ export const MilestonesRow = ({ milestones, weeks, currentWeekIndex }) => {
       <div className="flex relative overflow-visible" style={{ minHeight: '2.5rem' }}>
         {weeks.map((week, weekIndex) => {
           const weekMilestones = processedMilestones.filter(m => m.weekIndex === weekIndex);
-          
+
           // Use appropriate key based on object type
           // For daily view: week is a day object with .label property
           // For weekly view: week is a string
           const key = typeof week === 'object' && week.label ? week.label : week;
-          
+
           return (
             <div key={key} className="relative w-16 border-r border-gray-200 bg-purple-50" style={{ minHeight: '2.5rem' }}>
               {weekIndex === currentWeekIndex && (
                 <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
               )}
-              
+
               {weekMilestones.length > 0 && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-0.5">
                   {weekMilestones.map((milestone, index) => (
@@ -116,9 +113,9 @@ export const MilestonesRow = ({ milestones, weeks, currentWeekIndex }) => {
 export const DeadlineAnnotation = ({ deadlines, type }) => {
   const bgColor = type === 'hard' ? 'bg-red-500 border-red-600' : 'bg-blue-500 border-blue-600';
   const tooltipPrefix = type === 'hard' ? 'Hard Deadline' : 'Soft Deadline';
-  
+
   return deadlines.map((deadline, index) => (
-    <TooltipWrapper 
+    <TooltipWrapper
       key={`${type}-${index}`}
       text={`${tooltipPrefix}: ${deadline.formattedDate} - ${deadline.item}`}
     >
@@ -145,18 +142,18 @@ export const StreamMilestonesRow = ({ weeks, currentWeekIndex, hardDeadlines, so
         const weekHardDeadlines = hardDeadlines.filter(d => d.weekIndex === weekIndex);
         const weekSoftDeadlines = softDeadlines.filter(d => d.weekIndex === weekIndex);
         const weekHasDeadlines = weekHardDeadlines.length > 0 || weekSoftDeadlines.length > 0;
-        
+
         // Use appropriate key based on object type
-        // For daily view: week is a day object with .label property  
+        // For daily view: week is a day object with .label property
         // For weekly view: week is a string
         const key = typeof week === 'object' && week.label ? week.label : week;
-        
+
         return (
           <div key={key} className="relative w-16 border-r border-gray-200 bg-yellow-50" style={{ minHeight: '2.5rem' }}>
             {weekIndex === currentWeekIndex && (
               <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
             )}
-            
+
             {weekHasDeadlines && (
               <div className="absolute inset-0 flex flex-col items-center justify-center p-0.5">
                 <DeadlineAnnotation deadlines={weekHardDeadlines} type="hard" />
@@ -179,13 +176,13 @@ export const RiskAnnotation = ({ risk }) => {
     medium: 'bg-yellow-600 border-yellow-700',
     low: 'bg-orange-600 border-orange-700'
   };
-  
+
   const riskEmojis = {
     high: '🔴',
-    medium: '🟡', 
+    medium: '🟡',
     low: '🟠'
   };
-  
+
   return (
     <TooltipWrapper text={`${risk.riskLevel?.toUpperCase()} Risk: ${risk.name} (${risk.timeline})`}>
       <div className={`text-white text-xs px-1 py-0.5 rounded shadow-sm border mb-0.5 max-w-14 text-center cursor-help ${riskColors[risk.riskLevel] || riskColors.low}`}>
@@ -214,18 +211,18 @@ export const RisksRow = ({ weeks, currentWeekIndex, risks }) => (
           const { start, end } = parseTimelineRange(risk.timeline, weeks);
           return weekIndex >= start && weekIndex <= end;
         });
-        
+
         // Use appropriate key based on object type
         // For daily view: week is a day object with .label property
         // For weekly view: week is a string
         const key = typeof week === 'object' && week.label ? week.label : week;
-        
+
         return (
           <div key={key} className="relative w-16 border-r border-gray-200 bg-red-50" style={{ minHeight: '2.5rem' }}>
             {weekIndex === currentWeekIndex && (
               <div className="absolute left-0 top-0 bottom-0 border-l-2 border-dotted border-green-500" />
             )}
-            
+
             {weekRisks.length > 0 && (
               <div className="absolute inset-0 flex flex-col items-center justify-center p-0.5">
                 {weekRisks.map((risk, index) => (
@@ -247,7 +244,7 @@ export const TimelineBar = ({ item, weeks }) => {
   const { start, end } = parseTimelineRange(item.timeline, weeks);
   const width = ((end - start + 1));
   const left = (start);
-  
+
   return (
     <TooltipWrapper text={`${item.name}: ${item.timeline} | Team: ${item.team}`}>
       <div
@@ -277,7 +274,7 @@ export const TimelineBar = ({ item, weeks }) => {
 export const processStreamDeadlines = (items, weeks) => {
   const hardDeadlines = [];
   const softDeadlines = [];
-  
+
   items.forEach(item => {
     if (item.hardDeadline) {
       const weekIndex = parseDeadlineDate(item.hardDeadline, weeks);
@@ -286,14 +283,14 @@ export const processStreamDeadlines = (items, weeks) => {
           weekIndex,
           date: item.hardDeadline,
           item: item.deadlineLabel || item.name,
-          formattedDate: new Date(item.hardDeadline).toLocaleDateString('en-AU', { 
-            day: 'numeric', 
-            month: 'short' 
+          formattedDate: new Date(item.hardDeadline).toLocaleDateString('en-AU', {
+            day: 'numeric',
+            month: 'short'
           })
         });
       }
     }
-    
+
     if (item.softDeadline) {
       const weekIndex = parseDeadlineDate(item.softDeadline, weeks);
       if (weekIndex !== null) {
@@ -301,14 +298,14 @@ export const processStreamDeadlines = (items, weeks) => {
           weekIndex,
           date: item.softDeadline,
           item: item.deadlineLabel || item.name,
-          formattedDate: new Date(item.softDeadline).toLocaleDateString('en-AU', { 
-            day: 'numeric', 
-            month: 'short' 
+          formattedDate: new Date(item.softDeadline).toLocaleDateString('en-AU', {
+            day: 'numeric',
+            month: 'short'
           })
         });
       }
     }
   });
-  
+
   return { hardDeadlines, softDeadlines };
 };

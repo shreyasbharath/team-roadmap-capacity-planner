@@ -17,7 +17,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { RoadmapPlanner } from '../components/RoadmapPlanner.jsx';
 
 // Mock roadmap data for testing - using correct markdown format

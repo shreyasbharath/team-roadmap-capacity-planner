@@ -1,14 +1,12 @@
-// Simple test with inline CapacityBar component
-import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 
 // Simple inline component for testing
-const SimpleCapacityBar = ({ capacity, weeks }) => {
+const SimpleCapacityBar = ({ capacity }) => {
   // Hard-code the values to avoid any parsing issues
   const left = 36; // Aug W2 would be at index 9, so 9 * 4 = 36
   const width = 8;  // 2 weeks * 4 = 8
-  
+
   return (
     <div
       className="border-white border-2 cursor-help"
@@ -46,7 +44,7 @@ describe('Simple CapacityBar Test', () => {
     const capacityBar = container.querySelector('[class*="border-white"]');
     expect(capacityBar).toBeInTheDocument();
     expect(capacityBar).toHaveTextContent('Test Capacity');
-    
+
     // Test the actual inline style values
     expect(capacityBar.style.left).toBe('36rem');
     expect(capacityBar.style.width).toBe('8rem');

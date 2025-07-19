@@ -1,5 +1,3 @@
-// src/components/__tests__/TeamCapacity.test.jsx
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { CapacityBar, TeamCapacityRow } from '../TeamCapacity.jsx';
@@ -9,13 +7,13 @@ vi.mock('../../domain/timelineParser.js', () => ({
   parseTimelineRange: vi.fn((timeline, weeks) => {
     // Mock implementation that matches the real logic
     if (!timeline) return { start: 0, end: 0 };
-    
+
     const parts = timeline.split('-');
     if (parts.length !== 2) return { start: 0, end: 0 };
-    
+
     const startIndex = weeks.indexOf(parts[0].trim());
     const endIndex = weeks.indexOf(parts[1].trim());
-    
+
     return {
       start: startIndex >= 0 ? startIndex : 0,
       end: endIndex >= 0 ? endIndex : 0
@@ -54,7 +52,7 @@ describe('TeamCapacity', () => {
       const capacityBar = container.querySelector('[class*="cursor-help"]');
       expect(capacityBar).toBeInTheDocument();
       expect(capacityBar).toHaveTextContent('Alex Annual Leave');
-      
+
       // Skip the style checks for now to see if the component renders at all
       // TODO: Fix the positioning tests
       // expect(capacityBar.style.position).toBe('absolute');
@@ -89,7 +87,7 @@ describe('TeamCapacity', () => {
         }
       ];
 
-      testCases.forEach(({ name, timeline, color, expectedLeft, expectedWidth }) => {
+      testCases.forEach(({ name, timeline, color }) => {
         // Act
         const { container } = render(
           <div style={{ position: 'relative', width: '1000px', height: '100px' }}>
@@ -102,23 +100,16 @@ describe('TeamCapacity', () => {
 
         // Assert
         const capacityBar = container.querySelector('[class*="cursor-help"]');
-        
+
         expect(capacityBar).toBeInTheDocument();
         expect(capacityBar).toHaveTextContent(name);
-        
+
         // Skip positioning tests temporarily
         // TODO: Fix positioning tests
         // expect(capacityBar.style.position).toBe('absolute');
         // expect(capacityBar.style.left).toBe(expectedLeft);
         // expect(capacityBar.style.width).toBe(expectedWidth);
-        
-        // Convert hex to RGB for comparison since browsers return RGB format
-        const hexToRgb = (hex) => {
-          const r = parseInt(hex.slice(1, 3), 16);
-          const g = parseInt(hex.slice(3, 5), 16);
-          const b = parseInt(hex.slice(5, 7), 16);
-          return `rgb(${r}, ${g}, ${b})`;
-        };
+
         // Skip color test too
         // expect(capacityBar.style.backgroundColor).toBe(hexToRgb(color));
       });
@@ -147,7 +138,7 @@ describe('TeamCapacity', () => {
         }
       ];
 
-      edgeCases.forEach(({ name, timeline, expectedLeft, expectedWidth }) => {
+      edgeCases.forEach(({ name, timeline }) => {
         // Act
         const { container } = render(
           <div style={{ position: 'relative', width: '1000px', height: '100px' }}>
@@ -160,7 +151,7 @@ describe('TeamCapacity', () => {
 
         // Assert
         const capacityBar = container.querySelector('[class*="cursor-help"]');
-        
+
         expect(capacityBar).toBeInTheDocument();
         // Skip positioning tests temporarily
         // TODO: Fix positioning tests
@@ -186,7 +177,7 @@ describe('TeamCapacity', () => {
 
       // Assert
       const capacityBar = container.querySelector('[class*="cursor-help"]');
-      
+
       // Check required CSS classes
       expect(capacityBar).toHaveClass('absolute'); // Should have absolute class for positioning
       expect(capacityBar).toHaveClass('top-1');
@@ -198,7 +189,7 @@ describe('TeamCapacity', () => {
       expect(capacityBar).toHaveClass('items-center');
       expect(capacityBar).toHaveClass('justify-start');
       expect(capacityBar).toHaveClass('cursor-help');
-      
+
       // Skip inline style tests temporarily
       // TODO: Fix inline style tests
       // expect(capacityBar.style.position).toBe('absolute');
@@ -226,8 +217,8 @@ describe('TeamCapacity', () => {
 
       // Act
       render(
-        <TeamCapacityRow 
-          teamCapacity={teamCapacity} 
+        <TeamCapacityRow
+          teamCapacity={teamCapacity}
           weeks={mockWeeks}
           currentWeekIndex={10}
         />
@@ -251,8 +242,8 @@ describe('TeamCapacity', () => {
 
       // Act
       const { container } = render(
-        <TeamCapacityRow 
-          teamCapacity={teamCapacity} 
+        <TeamCapacityRow
+          teamCapacity={teamCapacity}
           weeks={mockWeeks}
           currentWeekIndex={10}
         />
@@ -261,7 +252,7 @@ describe('TeamCapacity', () => {
       // Assert
       const weekCells = container.querySelectorAll('.w-16');
       expect(weekCells).toHaveLength(mockWeeks.length);
-      
+
       // Each week cell should have width of 4rem (w-16 = 4rem)
       weekCells.forEach(cell => {
         expect(cell).toHaveClass('w-16');
@@ -280,8 +271,8 @@ describe('TeamCapacity', () => {
 
       // Act
       const { container } = render(
-        <TeamCapacityRow 
-          teamCapacity={teamCapacity} 
+        <TeamCapacityRow
+          teamCapacity={teamCapacity}
           weeks={mockWeeks}
           currentWeekIndex={10}
         />
@@ -289,14 +280,13 @@ describe('TeamCapacity', () => {
 
       // Assert
       const weekCells = container.querySelectorAll('.w-16');
-      const capacityBar = container.querySelector('[class*="cursor-help"]');
-      
+
       // Aug W2 is at index 9, so the capacity bar should align with the 10th week cell
       expect(weekCells[9]).toBeInTheDocument();
       // Skip positioning tests temporarily
       // TODO: Fix positioning tests
       // expect(capacityBar.style.left).toBe('36rem');
-      
+
       // The capacity bar should span 2 weeks (Aug W2-Aug W3)
       // expect(capacityBar.style.width).toBe('8rem');
     });
@@ -313,8 +303,8 @@ describe('TeamCapacity', () => {
 
       // Act
       const { container } = render(
-        <TeamCapacityRow 
-          teamCapacity={teamCapacity} 
+        <TeamCapacityRow
+          teamCapacity={teamCapacity}
           weeks={mockWeeks}
           currentWeekIndex={10}
         />
@@ -330,8 +320,8 @@ describe('TeamCapacity', () => {
     it('should handle empty team capacity', () => {
       // Arrange & Act
       const { container } = render(
-        <TeamCapacityRow 
-          teamCapacity={[]} 
+        <TeamCapacityRow
+          teamCapacity={[]}
           weeks={mockWeeks}
           currentWeekIndex={10}
         />
@@ -344,8 +334,8 @@ describe('TeamCapacity', () => {
     it('should handle null team capacity', () => {
       // Arrange & Act
       const { container } = render(
-        <TeamCapacityRow 
-          teamCapacity={null} 
+        <TeamCapacityRow
+          teamCapacity={null}
           weeks={mockWeeks}
           currentWeekIndex={10}
         />
@@ -360,7 +350,7 @@ describe('TeamCapacity', () => {
     it('should position capacity bars correctly relative to week cells', () => {
       // This test specifically checks for the positioning bug where capacity bars
       // are offset to the right due to incorrect calculation
-      
+
       // Arrange
       const teamCapacity = [
         {
@@ -372,28 +362,27 @@ describe('TeamCapacity', () => {
 
       // Act
       const { container } = render(
-        <TeamCapacityRow 
-          teamCapacity={teamCapacity} 
+        <TeamCapacityRow
+          teamCapacity={teamCapacity}
           weeks={mockWeeks}
           currentWeekIndex={10}
         />
       );
 
       // Assert
-      const capacityBar = container.querySelector('[class*="cursor-help"]');
       const weekCells = container.querySelectorAll('.w-16');
-      
+
       // Jul W1 is at index 4
       // The capacity bar should start at the beginning of the 5th week cell (index 4)
       // With each week cell being 4rem wide (w-16), the capacity bar should be at 16rem
       // Skip positioning tests temporarily
       // TODO: Fix positioning tests
       // expect(capacityBar.style.left).toBe('16rem');
-      
+
       // The capacity bar should span 3 weeks (Jul W1, Jul W2, Jul W3)
       // So width should be 3 * 4rem = 12rem
       // expect(capacityBar.style.width).toBe('12rem');
-      
+
       // Verify the week cells exist and have correct classes
       expect(weekCells).toHaveLength(mockWeeks.length);
       expect(weekCells[4]).toHaveClass('w-16'); // Jul W1 week cell
@@ -402,7 +391,7 @@ describe('TeamCapacity', () => {
     it('should use consistent positioning approach with timeline bars', () => {
       // This test verifies that capacity bars use the same positioning approach as timeline bars
       // to avoid the bug where capacity bars are positioned incorrectly
-      
+
       // Arrange
       const capacity = {
         name: 'Test Capacity',
@@ -411,22 +400,21 @@ describe('TeamCapacity', () => {
       };
 
       // Act
-      const { container } = render(
+      render(
         <div style={{ position: 'relative', width: '1000px', height: '100px' }}>
           <CapacityBar capacity={capacity} weeks={mockWeeks} />
         </div>
       );
 
       // Assert
-      const capacityBar = container.querySelector('[class*="cursor-help"]');
-      
+
       // Jul W2 is at index 5, so left should be 5 * 4 = 20rem
       // Jul W2 to Jul W4 is 3 weeks, so width should be 3 * 4 = 12rem
       // Skip positioning tests temporarily
       // TODO: Fix positioning tests
       // expect(capacityBar.style.left).toBe('20rem');
       // expect(capacityBar.style.width).toBe('12rem');
-      
+
       // Should use inline position and z-index like timeline bars
       // expect(capacityBar.style.position).toBe('absolute');
       // expect(capacityBar.style.zIndex).toBe('20');
@@ -435,7 +423,7 @@ describe('TeamCapacity', () => {
     it('should not rely on CSS classes for positioning', () => {
       // This test ensures that the capacity bars use inline styles for positioning
       // rather than CSS classes, which can cause positioning issues
-      
+
       // Arrange
       const capacity = {
         name: 'CSS Class Test',
@@ -452,16 +440,16 @@ describe('TeamCapacity', () => {
 
       // Assert
       const capacityBar = container.querySelector('[class*="cursor-help"]');
-      
+
       // Should have absolute class but NOT z-10 class (z-index should be inline style)
       expect(capacityBar).toHaveClass('absolute');
       expect(capacityBar).not.toHaveClass('z-10');
-      
+
       // Skip positioning tests temporarily
       // TODO: Fix positioning tests
       // expect(capacityBar.style.position).toBe('absolute');
       // expect(capacityBar.style.zIndex).toBe('20');
-      
+
       // Should have correct positioning
       // expect(capacityBar.style.left).toBe('32rem'); // Aug W1 is index 8
       // expect(capacityBar.style.width).toBe('8rem'); // 2 weeks

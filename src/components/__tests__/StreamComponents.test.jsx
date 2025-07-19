@@ -1,12 +1,10 @@
-// src/components/__tests__/StreamComponents.test.jsx
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { 
-  TooltipWrapper, 
-  StreamHeader, 
+import {
+  TooltipWrapper,
+  StreamHeader,
   MilestoneAnnotation,
-  processStreamDeadlines 
+  processStreamDeadlines
 } from '../StreamComponents.jsx';
 
 describe('StreamComponents', () => {
@@ -18,7 +16,7 @@ describe('StreamComponents', () => {
           <div>Test content</div>
         </TooltipWrapper>
       );
-      
+
       // Assert
       expect(screen.getByText('Test content')).toBeInTheDocument();
       expect(screen.getByText('Test tooltip')).toBeInTheDocument();
@@ -31,7 +29,7 @@ describe('StreamComponents', () => {
           <div>Test content</div>
         </TooltipWrapper>
       );
-      
+
       // Assert
       expect(screen.getByText('Test content')).toBeInTheDocument();
       expect(screen.queryByText('Test tooltip')).not.toBeInTheDocument();
@@ -42,13 +40,13 @@ describe('StreamComponents', () => {
     it('should display stream name and counts', () => {
       // Arrange & Act
       render(
-        <StreamHeader 
-          streamName="Test Stream" 
-          itemCount={5} 
-          riskCount={2} 
+        <StreamHeader
+          streamName="Test Stream"
+          itemCount={5}
+          riskCount={2}
         />
       );
-      
+
       // Assert
       expect(screen.getByText('Test Stream')).toBeInTheDocument();
       // Tooltip should contain the counts
@@ -64,10 +62,10 @@ describe('StreamComponents', () => {
         softDate: null,
         name: 'Milestone: Test Deadline'
       };
-      
+
       // Act
       render(<MilestoneAnnotation milestone={milestone} />);
-      
+
       // Assert
       expect(screen.getByText('15 Aug')).toBeInTheDocument();
       expect(screen.getByText('Test Deadline')).toBeInTheDocument();
@@ -83,10 +81,10 @@ describe('StreamComponents', () => {
         softDate: '2025-08-20',
         name: 'Milestone: Soft Deadline'
       };
-      
+
       // Act
       render(<MilestoneAnnotation milestone={milestone} />);
-      
+
       // Assert
       expect(screen.getByText('20 Aug')).toBeInTheDocument();
       expect(screen.getByText('Soft Deadline')).toBeInTheDocument();
@@ -106,15 +104,15 @@ describe('StreamComponents', () => {
           deadlineLabel: 'Release'
         },
         {
-          name: 'Item 2', 
+          name: 'Item 2',
           softDeadline: '2025-08-20'
         }
       ];
       const weeks = ['Aug W1', 'Aug W2', 'Aug W3', 'Aug W4'];
-      
+
       // Act
       const result = processStreamDeadlines(items, weeks);
-      
+
       // Assert
       expect(result.hardDeadlines).toHaveLength(1);
       expect(result.softDeadlines).toHaveLength(1);
@@ -131,10 +129,10 @@ describe('StreamComponents', () => {
         }
       ];
       const weeks = ['Aug W1', 'Aug W2'];
-      
+
       // Act
       const result = processStreamDeadlines(items, weeks);
-      
+
       // Assert
       expect(result.hardDeadlines).toHaveLength(0);
       expect(result.softDeadlines).toHaveLength(0);
@@ -149,10 +147,10 @@ describe('StreamComponents', () => {
         }
       ];
       const weeks = ['Aug W1', 'Aug W2'];
-      
+
       // Act
       const result = processStreamDeadlines(items, weeks);
-      
+
       // Assert
       expect(result.hardDeadlines).toHaveLength(0);
     });
