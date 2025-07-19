@@ -51,22 +51,22 @@ The following `data-testid` attributes were added to components for reliable tes
 
 ### Run Timeline Bar Tests Only
 ```bash
-npm run test:timeline-bars
+pnpm test:timeline-bars
 ```
 
 ### Run All Tests
 ```bash
-npm run test
+pnpm test
 ```
 
 ### Run Tests with UI
 ```bash
-npm run test:ui
+pnpm test:ui
 ```
 
 ### Run Tests with Coverage
 ```bash
-npm run test:coverage
+pnpm test:coverage
 ```
 
 ## CI/CD Integration
@@ -122,7 +122,7 @@ If tests fail:
 
 When making changes to timeline bar rendering:
 
-1. Run the timeline bar tests first: `npm run test:timeline-bars`
+1. Run the timeline bar tests first: `pnpm test:timeline-bars`
 2. Verify positioning calculations are correct
 3. Check that bars are visible in the browser
 4. Update tests if new functionality is added

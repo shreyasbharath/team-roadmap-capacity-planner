@@ -17,7 +17,7 @@ This directory contains comprehensive examples showcasing all features of the Te
   - ✅ Deadline tracking with business context
   - ✅ Color-coded visual organisation
 
-### 2. Daily Sprint Roadmap (`roadmap-daily.md`) 
+### 2. Daily Sprint Roadmap (`roadmap-daily.md`)
 **Use Case:** Sprint planning with daily granularity
 - **Timeline:** July 15-29, 2025 (daily granularity, weekdays only)
 - **Teams:** Alex, Jordan, Taylor, Morgan, Casey, Design Team, QA Team, DevOps
@@ -36,12 +36,12 @@ This directory contains comprehensive examples showcasing all features of the Te
 - **Quarterly:** Legacy system compatibility, Platform deadline pressure, Authentication system complexity
 - **Daily:** Database migration data corruption, Integration testing failures
 
-### Medium Risk (🟡)  
+### Medium Risk (🟡)
 - **Quarterly:** Third-party API rate limiting, Team capacity during leave, Security compliance
 - **Daily:** API performance under load, Third-party push service downtime, Team capacity during Alex leave
 
 ### Low Risk (🟠)
-- **Quarterly:** Infrastructure scaling costs  
+- **Quarterly:** Infrastructure scaling costs
 - **Daily:** App Store review delays
 
 ## Milestone Examples
@@ -62,7 +62,7 @@ This directory contains comprehensive examples showcasing all features of the Te
 - Training periods (Sep W2-Sep W3)
 - On-call rotations (Aug W3)
 
-### Sprint Planning  
+### Sprint Planning
 - Short-term leave (2-3 days)
 - Single-day commitments (meetings, training)
 - Code review focused days
@@ -71,7 +71,7 @@ This directory contains comprehensive examples showcasing all features of the Te
 ## How to Switch Examples
 
 ### In the Application
-1. Run `npm run dev`
+1. Run `pnpm dev`
 2. Use the example switcher buttons at the top
 3. Toggle between "Quarterly Roadmap" and "Daily Sprint Roadmap"
 
@@ -91,7 +91,7 @@ import dailyData from '../data/roadmap-daily.md?raw';
 Both examples are designed to exercise every component of the system:
 
 1. **Timeline Parsing:** Both weekly and daily granularity
-2. **Team Capacity:** Various leave patterns and constraints  
+2. **Team Capacity:** Various leave patterns and constraints
 3. **Risk Management:** All risk levels with realistic scenarios
 4. **Milestone Tracking:** Hard and soft deadlines with business context
 5. **Stream Management:** Multiple parallel workstreams
@@ -119,4 +119,4 @@ Both examples can be used for performance testing:
 - **Risk Icons:** 7 risks per example testing icon rendering performance
 - **Milestone Icons:** 6+ milestones per example testing tooltip performance
 
-Run `npm run test risk-parsing` to validate data parsing accuracy.
+Run `pnpm test risk-parsing` to validate data parsing accuracy.

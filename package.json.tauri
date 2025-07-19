@@ -17,7 +17,7 @@
     "pdf": "node scripts/generate-pdf.js",
     "pdf:landscape": "node scripts/generate-pdf.js --landscape",
     "pdf:a3": "node scripts/generate-pdf.js --format=A3",
-    "screenshot": "node scripts/generate-screenshot.js",
+    "screenshot:examples": "node scripts/generate-examples-screenshots.js",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
