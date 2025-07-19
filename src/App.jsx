@@ -1,19 +1,19 @@
-import { ExampleSwitcher } from './components/ExampleSwitcher.jsx';
+import { IntegratedRoadmapEditor } from './components/IntegratedRoadmapEditor.jsx';
 import './styles/globals.css';
 
 /**
- * Main application component with example switching capability
+ * Main application component with integrated markdown editor
  * 
- * To use the original single roadmap view, import RoadmapPlanner instead:
- * import { RoadmapPlanner } from './components/RoadmapPlanner.jsx';
- * 
- * And replace <ExampleSwitcher /> with:
- * <RoadmapPlanner enableDebug={import.meta.env.DEV} />
+ * Users can now:
+ * - Load any roadmap file using the Load button
+ * - Edit roadmaps in real-time with the markdown editor
+ * - Save their work using the Save button
+ * - Export to PDF
  */
 function App() {
   return (
     <div className="App">
-      <ExampleSwitcher />
+      <IntegratedRoadmapEditor enableDebug={import.meta.env.DEV} />
     </div>
   );
 }

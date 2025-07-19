@@ -1,18 +1,18 @@
 # Roadmap Planner
 
-A **cross-platform** interactive roadmap and capacity planning tool built with React and Tauri. Available as both a web application and a native desktop app for Windows, macOS, and Linux.
+A **cross-platform** interactive roadmap and capacity planning tool with live markdown editing. Built with React and Tauri, available as both a web application and native desktop app for Windows, macOS, and Linux.
 
-![Fortnightly Plan](image.png)
+![Interactive Roadmap Editor](image.png)
 ![Quarterly Plan](docs/complex-roadmap.png)
 
-*Interactive roadmap showing project streams, team capacity, milestones, and risk tracking*
+*Live markdown editor with real-time roadmap preview showing project streams, team capacity, milestones, and risk tracking*
 
-> **Note**: If the screenshot above doesn't display, run `pnpm screenshot` to generate it.
+> **Note**: If the screenshots above don't display, run `pnpm screenshot` to generate them.
 
 ## 🎯 Platform Support
 
-**🌐 Web Application**: Access anywhere through your browser
-**🖥️ Desktop Application**: Native app with file system access and enhanced performance
+**🌐 Web Application**: Access anywhere through your browser with file download/upload  
+**🖥️ Desktop Application**: Native app with full file system access and enhanced performance
 - **Windows**: `.msi` installer with auto-updater support
 - **macOS**: Universal binary (Intel + Apple Silicon) with code signing
 - **Linux**: `.deb` and `.AppImage` packages
@@ -20,14 +20,20 @@ A **cross-platform** interactive roadmap and capacity planning tool built with R
 ## ✨ Features
 
 ### Core Features
+- **Live Markdown Editor**: Edit roadmaps in real-time with instant visual preview
+- **Split-Pane Interface**: Code and visual roadmap side-by-side
+- **Template System**: Quick-insert buttons for streams, tasks, milestones, risks
+- **Syntax Validation**: Real-time error checking and helpful suggestions
 - **Interactive Timeline**: Pan and zoom through your roadmap with smooth performance
 - **Team Capacity Planning**: Visualise leave, holidays, and resource constraints
 - **Risk Management**: Track and display project risks with severity levels
 - **Milestone Tracking**: Hard and soft deadlines with visual indicators
+- **Adaptive Timeline**: Automatic daily/weekly/quarterly granularity based on date ranges
 - **Responsive Design**: Optimised for desktop, tablet, and mobile
 
-### Desktop-Specific Features
-- **File Management**: Save and load roadmap files directly to your filesystem
+### File Operations
+- **Load Any File**: Import roadmap markdown files from anywhere
+- **Save & Export**: Save markdown files and export professional PDF reports
 - **Enhanced Export**: Native save dialogs with full PDF/PNG export
 - **Keyboard Navigation**: Full keyboard support with OS-native shortcuts
 - **Performance**: Native rendering with hardware acceleration

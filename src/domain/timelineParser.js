@@ -108,9 +108,11 @@ export const parseMarkdown = (markdownText) => {
   const streams = [];
   const teamCapacity = [];
   const milestones = [];
+  const risks = []; // Standalone risks section
   let currentStream = null;
   let inTeamCapacitySection = false;
   let inMilestonesSection = false;
+  let inRisksSection = false;
 
   lines.forEach(line => {
     const trimmed = line.trim();
@@ -118,18 +120,28 @@ export const parseMarkdown = (markdownText) => {
     if (trimmed.startsWith('## Team Capacity')) {
       inTeamCapacitySection = true;
       inMilestonesSection = false;
+      inRisksSection = false;
       return;
     }
 
     if (trimmed.startsWith('## Streams')) {
       inTeamCapacitySection = false;
       inMilestonesSection = false;
+      inRisksSection = false;
       return;
     }
 
     if (trimmed.startsWith('## Milestones')) {
       inTeamCapacitySection = false;
       inMilestonesSection = true;
+      inRisksSection = false;
+      return;
+    }
+
+    if (trimmed.startsWith('## Risks')) {
+      inTeamCapacitySection = false;
+      inMilestonesSection = false;
+      inRisksSection = true;
       return;
     }
 
@@ -142,6 +154,7 @@ export const parseMarkdown = (markdownText) => {
       };
       inTeamCapacitySection = false;
       inMilestonesSection = false;
+      inRisksSection = false;
     } else if (trimmed.startsWith('- **')) {
       const item = parseMarkdownItem(trimmed);
       if (!item) return;
@@ -150,6 +163,8 @@ export const parseMarkdown = (markdownText) => {
         teamCapacity.push(item);
       } else if (inMilestonesSection) {
         milestones.push(item);
+      } else if (inRisksSection) {
+        risks.push(item);
       } else if (currentStream) {
         if (item.riskLevel) {
           currentStream.risks.push(item);
@@ -161,6 +176,15 @@ export const parseMarkdown = (markdownText) => {
   });
 
   if (currentStream) streams.push(currentStream);
+
+  // Add standalone risks to streams as a virtual "Risks" stream
+  if (risks.length > 0) {
+    streams.push({
+      name: 'Project Risks',
+      items: [],
+      risks: risks
+    });
+  }
 
   // Filter out streams with no items and no risks
   const filteredStreams = streams.filter(stream =>

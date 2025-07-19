@@ -157,8 +157,8 @@ describe('Milestone and Risk Icon Components', () => {
 
   describe('Icon Integration', () => {
     it('should render multiple icons without overlap', () => {
-      const container = render(
-        <div className="flex gap-1">
+      const { container } = render(
+        <div className="flex gap-1" data-testid="icon-container">
           <MilestoneIcon milestone={{ name: 'Test', hardDate: '2025-08-15' }} />
           <RiskIcon risk={{ name: 'Test Risk', riskLevel: 'high', timeline: 'Aug W1' }} />
         </div>
@@ -166,16 +166,14 @@ describe('Milestone and Risk Icon Components', () => {
       
       const milestoneIcon = screen.getByTestId('milestone-icon');
       const riskIcon = screen.getByTestId('risk-icon');
+      const iconContainer = screen.getByTestId('icon-container');
       
       expect(milestoneIcon).toBeInTheDocument();
       expect(riskIcon).toBeInTheDocument();
       
-      // Icons should not overlap (proper spacing)
-      const milestoneRect = milestoneIcon.getBoundingClientRect();
-      const riskRect = riskIcon.getBoundingClientRect();
-      
-      // In JSDOM, getBoundingClientRect returns zeros, so we check CSS classes instead
-      expect(milestoneIcon.parentElement).toHaveClass('gap-1');
+      // Icons should be contained within a properly spaced container
+      expect(iconContainer).toHaveClass('flex');
+      expect(iconContainer).toHaveClass('gap-1');
     });
   });
 });
