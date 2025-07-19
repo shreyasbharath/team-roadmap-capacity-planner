@@ -54,7 +54,7 @@ export const IntegratedRoadmapEditor = ({
         URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.error('Failed to save:', error);
+      console.error('Failed to save:', error); // eslint-disable-line no-console
       // Show error toast or notification
     }
   };
@@ -95,7 +95,7 @@ export const IntegratedRoadmapEditor = ({
         input.click();
       }
     } catch (error) {
-      console.error('Failed to load:', error);
+      console.error('Failed to load:', error); // eslint-disable-line no-console
       // Show error toast or notification
     }
   };

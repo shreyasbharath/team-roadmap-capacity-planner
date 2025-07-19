@@ -1,4 +1,5 @@
 // src/components/__tests__/IntegratedRoadmapEditor.test.jsx
+/* global global */
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { IntegratedRoadmapEditor } from '../IntegratedRoadmapEditor.jsx';
@@ -17,28 +18,11 @@ vi.mock('../data/roadmap.md?raw', () => ({
   default: '# Default Roadmap\n\n## Streams\n- **Default Task**: Jul W1-Jul W2 | Team | color: #123456'
 }));
 
-// Mock Tauri APIs
-const mockTauriApi = {
-  writeTextFile: vi.fn(),
-  readTextFile: vi.fn(),
-  dialog: {
-    save: vi.fn(),
-    open: vi.fn()
-  }
-};
-
 // Mock DOM APIs that might be used in file operations
 const mockCreateElement = vi.fn();
 const mockAppendChild = vi.fn();
 const mockRemoveChild = vi.fn();
 const mockClick = vi.fn();
-
-const mockElement = {
-  href: '',
-  download: '',
-  click: mockClick,
-  style: {}
-};
 
 describe('IntegratedRoadmapEditor', () => {
   const mockMarkdown = `# Test Roadmap

@@ -157,7 +157,7 @@ describe('Milestone and Risk Icon Components', () => {
 
   describe('Icon Integration', () => {
     it('should render multiple icons without overlap', () => {
-      const { container } = render(
+      render(
         <div className="flex gap-1" data-testid="icon-container">
           <MilestoneIcon milestone={{ name: 'Test', hardDate: '2025-08-15' }} />
           <RiskIcon risk={{ name: 'Test Risk', riskLevel: 'high', timeline: 'Aug W1' }} />

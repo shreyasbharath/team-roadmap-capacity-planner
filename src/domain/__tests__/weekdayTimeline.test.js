@@ -74,14 +74,6 @@ describe('Weekday-Only Daily Timeline Tests', () => {
 
   describe('Explicit weekend control', () => {
     it('should include weekends when explicit flag present', () => {
-      const markdownWithFlag = `# Weekend Sprint
-
-Show-weekends for deployment.
-
-## Streams
-### Development
-- **Weekend Task**: 2025-07-19 to 2025-07-21 | Team | color: #4F46E5`;
-
       const result = generateDailyTimeline(
         new Date('2025-07-15'),
         new Date('2025-07-21'),
@@ -92,12 +84,6 @@ Show-weekends for deployment.
     });
 
     it('should exclude weekends when no flag present', () => {
-      const markdownNoFlag = `# Weekday Sprint
-
-## Streams
-### Development
-- **Weekday Task**: 2025-07-18 to 2025-07-20 | Team | color: #4F46E5`;
-
       const result = generateDailyTimeline(
         new Date('2025-07-15'),
         new Date('2025-07-21'),

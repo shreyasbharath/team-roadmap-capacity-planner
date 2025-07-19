@@ -529,7 +529,7 @@ const parseFlexibleDate = (dateStr) => {
       return date;
     }
   } catch (e) {
-    console.warn('Failed to parse date:', dateStr, e);
+    console.warn('Failed to parse date:', dateStr, e); // eslint-disable-line no-console
   }
 
   return null;

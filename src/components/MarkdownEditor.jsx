@@ -8,7 +8,6 @@ import { useState, useRef, useEffect } from 'react';
 export const MarkdownEditor = ({ 
   initialMarkdown = '', 
   onMarkdownChange, 
-  enablePreview = true,
   children,
   className = '',
   ...props 
@@ -251,11 +250,8 @@ export const MarkdownEditor = ({
  * Standalone roadmap editor with built-in roadmap planner
  */
 export const RoadmapEditor = ({ initialMarkdown, onSave, ...props }) => {
-  const [currentMarkdown, setCurrentMarkdown] = useState(initialMarkdown || '');
-  
   // This would integrate with your RoadmapPlanner component
   const handleMarkdownChange = (markdown) => {
-    setCurrentMarkdown(markdown);
     onSave?.(markdown);
   };
 
@@ -265,7 +261,7 @@ export const RoadmapEditor = ({ initialMarkdown, onSave, ...props }) => {
       onMarkdownChange={handleMarkdownChange}
       {...props}
     >
-      {/* This is where your RoadmapPlanner would be rendered with currentMarkdown */}
+      {/* This is where your RoadmapPlanner would be rendered */}
       <div className="p-4 text-center text-gray-500">
         <p>Roadmap preview will appear here</p>
         <p className="text-sm mt-2">Connect with RoadmapPlanner component</p>

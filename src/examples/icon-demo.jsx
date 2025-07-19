@@ -1,5 +1,4 @@
 // src/examples/icon-demo.jsx
-import React from 'react';
 import { MilestoneIcon, RiskIcon } from '../components/StreamComponents.jsx';
 
 /**
