@@ -3,9 +3,9 @@ import '@testing-library/jest-dom';
 import {
   TooltipWrapper,
   StreamHeader,
-  MilestoneAnnotation,
-  processStreamDeadlines
+  MilestoneAnnotation
 } from '../StreamComponents.jsx';
+import { processStreamDeadlines } from '../../utils/streamUtils.js';
 
 describe('StreamComponents', () => {
   describe('TooltipWrapper', () => {

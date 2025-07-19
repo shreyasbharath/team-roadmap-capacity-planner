@@ -1,9 +1,9 @@
 import {
   StreamHeader,
   StreamMilestonesRow,
-  RisksRow,
-  processStreamDeadlines
+  RisksRow
 } from './StreamComponents.jsx';
+import { processStreamDeadlines } from '../utils/streamUtils.js';
 import { StreamItem } from './StreamItem.jsx';
 
 /**

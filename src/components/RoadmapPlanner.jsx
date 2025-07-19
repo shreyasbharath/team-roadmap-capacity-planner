@@ -15,8 +15,8 @@ import { TimelineHeader, MonthHeaders, WeekHeaders, DayHeaders } from './Timelin
 import { TeamCapacityRow } from './TeamCapacity.jsx';
 import { MilestonesRow } from './StreamComponents.jsx';
 import { StreamContainer } from './StreamContainer.jsx';
+import { useZoom } from '../hooks/useZoom.js';
 import {
-  useZoom,
   ZoomControls,
   HelpPanel,
   LoadingSpinner,

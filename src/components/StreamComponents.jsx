@@ -18,14 +18,14 @@ export const ModernTooltip = ({ children, content, position = 'top' }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
-    <div 
+    <div
       className="relative inline-block"
       onMouseEnter={() => setIsVisible(true)}
       onMouseLeave={() => setIsVisible(false)}
     >
       {children}
       {isVisible && (
-        <div 
+        <div
           role="tooltip"
           className={`absolute z-50 px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-100 transition-opacity duration-300 ${
             position === 'top' ? 'bottom-full mb-2 left-1/2 transform -translate-x-1/2' : ''
@@ -52,12 +52,12 @@ export const MilestoneIcon = ({ milestone }) => {
   const colorClass = isHardDate ? 'text-red-500' : 'text-blue-500';
   const icon = isHardDate ? '🚩' : '🏁';
   const type = isHardDate ? 'Hard Milestone' : 'Soft Milestone';
-  
+
   const formattedDate = new Date(date).toLocaleDateString('en-AU', {
     day: 'numeric',
     month: 'short'
   });
-  
+
   const tooltipContent = (
     <div className="text-center">
       <div className="font-semibold">{type}: {formattedDate}</div>
@@ -67,7 +67,7 @@ export const MilestoneIcon = ({ milestone }) => {
 
   return (
     <ModernTooltip content={tooltipContent}>
-      <div 
+      <div
         data-testid="milestone-icon"
         className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-200 ${colorClass}`}
       >
@@ -83,19 +83,19 @@ export const MilestoneIcon = ({ milestone }) => {
 export const RiskIcon = ({ risk }) => {
   const riskColors = {
     high: 'text-red-500',
-    medium: 'text-yellow-500', 
+    medium: 'text-yellow-500',
     low: 'text-orange-500'
   };
-  
+
   const riskIcons = {
     high: '⚠️',
     medium: '⚠️',
     low: 'ℹ️'
   };
-  
+
   const colorClass = riskColors[risk.riskLevel] || riskColors.low;
   const icon = riskIcons[risk.riskLevel] || riskIcons.low;
-  
+
   const tooltipContent = (
     <div className="text-center">
       <div className="font-semibold">{risk.riskLevel?.toUpperCase()} Risk</div>
@@ -106,7 +106,7 @@ export const RiskIcon = ({ risk }) => {
 
   return (
     <ModernTooltip content={tooltipContent}>
-      <div 
+      <div
         data-testid="risk-icon"
         className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-200 ${colorClass}`}
       >
@@ -372,46 +372,4 @@ export const TimelineBar = ({ item, weeks }) => {
       </div>
     </TooltipWrapper>
   );
-};
-
-/**
- * Processes deadlines for a stream's items
- */
-export const processStreamDeadlines = (items, weeks) => {
-  const hardDeadlines = [];
-  const softDeadlines = [];
-
-  items.forEach(item => {
-    if (item.hardDeadline) {
-      const weekIndex = parseDeadlineDate(item.hardDeadline, weeks);
-      if (weekIndex !== null) {
-        hardDeadlines.push({
-          weekIndex,
-          date: item.hardDeadline,
-          item: item.deadlineLabel || item.name,
-          formattedDate: new Date(item.hardDeadline).toLocaleDateString('en-AU', {
-            day: 'numeric',
-            month: 'short'
-          })
-        });
-      }
-    }
-
-    if (item.softDeadline) {
-      const weekIndex = parseDeadlineDate(item.softDeadline, weeks);
-      if (weekIndex !== null) {
-        softDeadlines.push({
-          weekIndex,
-          date: item.softDeadline,
-          item: item.deadlineLabel || item.name,
-          formattedDate: new Date(item.softDeadline).toLocaleDateString('en-AU', {
-            day: 'numeric',
-            month: 'short'
-          })
-        });
-      }
-    }
-  });
-
-  return { hardDeadlines, softDeadlines };
 };
