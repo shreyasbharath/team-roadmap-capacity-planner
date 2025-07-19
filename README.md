@@ -2,7 +2,8 @@
 
 A **cross-platform** interactive roadmap and capacity planning tool built with React and Tauri. Available as both a web application and a native desktop app for Windows, macOS, and Linux.
 
-![Roadmap Screenshot](docs/roadmap-screenshot.png)
+![Fortnightly Plan](image.png)
+![Quarterly Plan](docs/complex-roadmap.png)
 
 *Interactive roadmap showing project streams, team capacity, milestones, and risk tracking*
 
@@ -10,7 +11,7 @@ A **cross-platform** interactive roadmap and capacity planning tool built with R
 
 ## 🎯 Platform Support
 
-**🌐 Web Application**: Access anywhere through your browser  
+**🌐 Web Application**: Access anywhere through your browser
 **🖥️ Desktop Application**: Native app with file system access and enhanced performance
 - **Windows**: `.msi` installer with auto-updater support
 - **macOS**: Universal binary (Intel + Apple Silicon) with code signing
@@ -115,7 +116,7 @@ Perfect for getting started - shows basic projects and milestones:
 - **User Dashboard**: Jul W1-Aug W2 | Frontend Team | color: #3B82F6
 - **Mobile Responsive**: Aug W3-Sep W1 | Frontend Team | color: #06B6D4
 
-### Backend Team  
+### Backend Team
 - **API v2.0**: Jul W2-Aug W4 | Backend Team | color: #10B981
 - **Database Migration**: Sep W1-Sep W3 | Backend Team | color: #8B5CF6
 
@@ -132,7 +133,7 @@ Showcases all features - team capacity, risks, multiple deadline types, and deta
 
 ## Team Capacity
 - **Alex Annual Leave**: Jul W3-Jul W4 | color: #FFA500
-- **Jordan Conference**: Aug W2-Aug W2 | color: #FF6B6B  
+- **Jordan Conference**: Aug W2-Aug W2 | color: #FF6B6B
 - **Taylor Training**: Sep W1-Sep W2 | color: #9B59B6
 - **Summer Holidays**: Aug W1-Aug W3 | color: #FFB84D
 - **Q4 Planning Week**: Oct W1-Oct W1 | color: #A78BFA
@@ -433,7 +434,7 @@ pnpm test:coverage    # Run tests with coverage
    ```bash
    # Test web version
    pnpm dev
-   
+
    # Test desktop version
    pnpm tauri:dev
    ```
