@@ -1,4 +1,5 @@
 import { parseTimelineRange, parseDeadlineDate } from '../domain/timelineParser.js';
+import { useState } from 'react';
 
 /**
  * Renders a tooltip wrapper for interactive elements
@@ -9,6 +10,111 @@ export const TooltipWrapper = ({ children, text, className = "" }) => (
     {text && <span className="tooltip-text">{text}</span>}
   </div>
 );
+
+/**
+ * Modern tooltip component with controlled visibility
+ */
+export const ModernTooltip = ({ children, content, position = 'top' }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <div 
+      className="relative inline-block"
+      onMouseEnter={() => setIsVisible(true)}
+      onMouseLeave={() => setIsVisible(false)}
+    >
+      {children}
+      {isVisible && (
+        <div 
+          role="tooltip"
+          className={`absolute z-50 px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-100 transition-opacity duration-300 ${
+            position === 'top' ? 'bottom-full mb-2 left-1/2 transform -translate-x-1/2' : ''
+          }`}
+          style={{
+            minWidth: '200px',
+            maxWidth: '300px'
+          }}
+        >
+          {content}
+          <div className="tooltip-arrow absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Clean milestone icon with hover tooltip
+ */
+export const MilestoneIcon = ({ milestone }) => {
+  const isHardDate = milestone.hardDate;
+  const date = isHardDate ? milestone.hardDate : milestone.softDate;
+  const colorClass = isHardDate ? 'text-red-500' : 'text-blue-500';
+  const icon = isHardDate ? '🚩' : '🏁';
+  const type = isHardDate ? 'Hard Milestone' : 'Soft Milestone';
+  
+  const formattedDate = new Date(date).toLocaleDateString('en-AU', {
+    day: 'numeric',
+    month: 'short'
+  });
+  
+  const tooltipContent = (
+    <div className="text-center">
+      <div className="font-semibold">{type}: {formattedDate}</div>
+      <div className="text-sm opacity-90">{milestone.name.replace('Milestone: ', '')}</div>
+    </div>
+  );
+
+  return (
+    <ModernTooltip content={tooltipContent}>
+      <div 
+        data-testid="milestone-icon"
+        className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-200 ${colorClass}`}
+      >
+        <span className="text-lg">{icon}</span>
+      </div>
+    </ModernTooltip>
+  );
+};
+
+/**
+ * Clean risk icon with hover tooltip
+ */
+export const RiskIcon = ({ risk }) => {
+  const riskColors = {
+    high: 'text-red-500',
+    medium: 'text-yellow-500', 
+    low: 'text-orange-500'
+  };
+  
+  const riskIcons = {
+    high: '⚠️',
+    medium: '⚠️',
+    low: 'ℹ️'
+  };
+  
+  const colorClass = riskColors[risk.riskLevel] || riskColors.low;
+  const icon = riskIcons[risk.riskLevel] || riskIcons.low;
+  
+  const tooltipContent = (
+    <div className="text-center">
+      <div className="font-semibold">{risk.riskLevel?.toUpperCase()} Risk</div>
+      <div className="text-sm opacity-90">{risk.name.replace('Risk: ', '')}</div>
+      <div className="text-xs opacity-75">{risk.timeline}</div>
+    </div>
+  );
+
+  return (
+    <ModernTooltip content={tooltipContent}>
+      <div 
+        data-testid="risk-icon"
+        className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-200 ${colorClass}`}
+      >
+        <span className="text-lg">{icon}</span>
+      </div>
+    </ModernTooltip>
+  );
+};
 
 /**
  * Renders the stream header with title
@@ -93,9 +199,9 @@ export const MilestonesRow = ({ milestones, weeks, currentWeekIndex }) => {
               )}
 
               {weekMilestones.length > 0 && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-0.5">
+                <div className="absolute inset-0 flex flex-wrap items-center justify-center p-1 gap-1">
                   {weekMilestones.map((milestone, index) => (
-                    <MilestoneAnnotation key={index} milestone={milestone} />
+                    <MilestoneIcon key={index} milestone={milestone} />
                   ))}
                 </div>
               )}
@@ -224,9 +330,9 @@ export const RisksRow = ({ weeks, currentWeekIndex, risks }) => (
             )}
 
             {weekRisks.length > 0 && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-0.5">
+              <div className="absolute inset-0 flex flex-wrap items-center justify-center p-1 gap-1">
                 {weekRisks.map((risk, index) => (
-                  <RiskAnnotation key={index} risk={risk} />
+                  <RiskIcon key={index} risk={risk} />
                 ))}
               </div>
             )}
