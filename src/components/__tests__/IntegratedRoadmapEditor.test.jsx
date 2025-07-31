@@ -79,7 +79,7 @@ describe('IntegratedRoadmapEditor', () => {
     
     expect(screen.getByText(`Lines: ${lines}`)).toBeInTheDocument();
     expect(screen.getByText(`Characters: ${chars}`)).toBeInTheDocument();
-    expect(screen.getByText('Auto-saved')).toBeInTheDocument();
+    expect(screen.getByText('Saved')).toBeInTheDocument();
   });
 
   it('has load, save, and export buttons', () => {

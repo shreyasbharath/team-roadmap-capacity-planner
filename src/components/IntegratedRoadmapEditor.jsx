@@ -1,5 +1,5 @@
 // src/components/IntegratedRoadmapEditor.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MarkdownEditor } from './MarkdownEditor.jsx';
 import { RoadmapPlanner } from './RoadmapPlanner.jsx';
 import roadmapData from '../data/roadmap.md?raw';
@@ -16,9 +16,27 @@ export const IntegratedRoadmapEditor = ({
 }) => {
   const [currentMarkdown, setCurrentMarkdown] = useState(initialMarkdown);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [currentFilePath, setCurrentFilePath] = useState(null);
+  const [currentFileName, setCurrentFileName] = useState(null);
+  const [isModified, setIsModified] = useState(false);
+  const [lastSavedContent, setLastSavedContent] = useState(initialMarkdown);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [currentMarkdown, currentFilePath]); // Dependencies for handleSave closure
 
   const handleMarkdownChange = (markdown) => {
     setCurrentMarkdown(markdown);
+    setIsModified(markdown !== lastSavedContent);
   };
 
   const handleSave = async () => {
@@ -30,15 +48,31 @@ export const IntegratedRoadmapEditor = ({
         const { save } = await import('@tauri-apps/api/dialog');
         const { writeTextFile } = await import('@tauri-apps/api/fs');
         
-        const filePath = await save({
-          filters: [{
-            name: 'Markdown',
-            extensions: ['md']
-          }]
-        });
+        let filePath = currentFilePath;
+        
+        // If no current file, prompt for save location
+        if (!filePath) {
+          filePath = await save({
+            filters: [{
+              name: 'Markdown',
+              extensions: ['md']
+            }]
+          });
+        }
         
         if (filePath) {
           await writeTextFile(filePath, currentMarkdown);
+          
+          // Update file state after successful save
+          if (!currentFilePath) {
+            setCurrentFilePath(filePath);
+            setCurrentFileName(filePath.split('/').pop());
+          }
+          
+          // Mark as saved
+          setLastSavedContent(currentMarkdown);
+          setIsModified(false);
+          
           // Show success toast or notification
         }
       } else {
@@ -47,7 +81,7 @@ export const IntegratedRoadmapEditor = ({
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'roadmap.md';
+        a.download = currentFileName || 'roadmap.md';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -76,6 +110,10 @@ export const IntegratedRoadmapEditor = ({
         if (selected && typeof selected === 'string') {
           const contents = await readTextFile(selected);
           setCurrentMarkdown(contents);
+          setCurrentFilePath(selected);
+          setCurrentFileName(selected.split('/').pop());
+          setLastSavedContent(contents);
+          setIsModified(false);
         }
       } else {
         // Web file input fallback
@@ -88,6 +126,11 @@ export const IntegratedRoadmapEditor = ({
             const reader = new FileReader();
             reader.onload = (e) => {
               setCurrentMarkdown(e.target.result);
+              setCurrentFileName(file.name);
+              setLastSavedContent(e.target.result);
+              setIsModified(false);
+              // Can't set file path in web mode
+              setCurrentFilePath(null);
             };
             reader.readAsText(file);
           }
@@ -114,6 +157,15 @@ export const IntegratedRoadmapEditor = ({
       <div className="flex items-center justify-between p-3 bg-white border-b border-gray-200 shadow-sm">
         <div className="flex items-center gap-2">
           <h1 className="text-lg font-semibold text-gray-900">Roadmap Editor</h1>
+          {currentFileName && (
+            <span className={`px-2 py-1 text-xs rounded ${
+              isModified 
+                ? 'bg-amber-100 text-amber-800' 
+                : 'bg-blue-100 text-blue-800'
+            }`}>
+              {currentFileName}{isModified ? ' •' : ''}
+            </span>
+          )}
           {enableDebug && (
             <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">
               Debug Mode
@@ -132,10 +184,14 @@ export const IntegratedRoadmapEditor = ({
           
           <button
             onClick={handleSave}
-            className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors duration-150"
+            className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ${
+              isModified
+                ? 'text-white bg-blue-600 hover:bg-blue-700'
+                : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+            }`}
             title="Save roadmap file"
           >
-            💾 Save
+            💾 Save{isModified ? ' *' : ''}
           </button>
           
           <button
@@ -184,9 +240,9 @@ export const IntegratedRoadmapEditor = ({
         </div>
         
         <div className="flex items-center gap-4">
-          <span>Auto-saved</span>
+          <span>{isModified ? 'Modified' : 'Saved'}</span>
           <div className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className={`w-2 h-2 rounded-full ${isModified ? 'bg-amber-500' : 'bg-green-500'}`}></div>
             <span>Connected</span>
           </div>
         </div>
