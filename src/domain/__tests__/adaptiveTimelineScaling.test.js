@@ -89,16 +89,16 @@ describe('Adaptive Timeline Scaling', () => {
 ## Aug 4-22, 2025 (Weekdays Only)
 
 ## Team Capacity
-- **Scott Annual Leave**: 2025-08-08 to 2025-08-08 | color: #FFA500
-- **Andrew off**: 2025-08-22 to 2025-08-26 | color: #FF6B6B
+- **Alex Annual Leave**: 2025-08-08 to 2025-08-08 | color: #FFA500
+- **Jordan off**: 2025-08-22 to 2025-08-26 | color: #FF6B6B
 
 ## Streams
 
-### Club Game Change Requests
+### Mobile App
 - **Auto Cancel Workflow**: 2025-08-04 to 2025-08-06 | Alex, Jordan | hard-deadline: 2025-08-06 | deadline-label: Feature Complete | color: #4F46E5
 
 ## Risks
-- **Andrew leaving**: 2025-08-22 to 2025-08-26 | risk-level: high | color: #DC2626`;
+- **Jordan leaving**: 2025-08-22 to 2025-08-26 | risk-level: high | color: #DC2626`;
 
       // Act
       const result = determineTimelineGranularity(realWorldMarkdown);
@@ -114,7 +114,7 @@ describe('Adaptive Timeline Scaling', () => {
 
       // Verify date range parsing found all items
       const ranges = extractDateRanges(realWorldMarkdown);
-      expect(ranges).toHaveLength(4); // Scott leave, Andrew off, Auto Cancel, Andrew leaving risk
+      expect(ranges).toHaveLength(4);
     });
 
     it('should use weekly view when roadmap exceeds 30-day threshold', () => {
@@ -169,7 +169,7 @@ describe('Adaptive Timeline Scaling', () => {
       // Act
       const result = determineTimelineGranularity(mixedMarkdown);
 
-      // Assert - Overall span is ~28 days (Jun 30 to Jul 29), so should be daily (threshold is 30)  
+      // Assert - Overall span is ~28 days (Jun 30 to Jul 29), so should be daily (threshold is 30)
       expect(result.granularity).toBe('daily');
       expect(result.span).toBeGreaterThan(21);
       expect(result.span).toBeLessThanOrEqual(30);
