@@ -1,3 +1,19 @@
+// Timeline granularity thresholds (in days)
+const DAILY_VIEW_MAX_DAYS = 30;      // Up to 4+ weeks - use daily view
+const WEEKLY_VIEW_MAX_DAYS = 84;     // Up to 12 weeks - use weekly view
+// Beyond 84 days uses quarterly view
+
+// Date/time calculation constants
+const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+const DAYS_PER_WEEK = 7;
+const WEEKDAY_RANGE = { MIN: 1, MAX: 5 }; // Monday = 1, Friday = 5
+
+// Week calculation constants
+const WEEKS_PER_MONTH = 4;
+
+// Date validation constants
+const DAY_RANGE = { MIN: 1, MAX: 31 };
+
 /**
  * Determines the optimal timeline granularity based on date ranges found in markdown
  */
@@ -12,16 +28,16 @@ export const determineTimelineGranularity = (markdownText) => {
   const includeWeekends = checkForWeekendsFlag(markdownText);
 
   const { startDate, endDate } = getOverallDateRange(dateRanges);
-  const daySpan = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+  const daySpan = Math.ceil((endDate - startDate) / MILLISECONDS_PER_DAY);
 
   // Determine granularity based on total span
-  if (daySpan <= 21) { // 3 weeks or less - use daily view
+  if (daySpan <= DAILY_VIEW_MAX_DAYS) {
     return {
       granularity: 'daily',
       config: generateDailyTimeline(startDate, endDate, { includeWeekends }),
       span: daySpan
     };
-  } else if (daySpan <= 84) { // 12 weeks or less - use weekly view
+  } else if (daySpan <= WEEKLY_VIEW_MAX_DAYS) {
     return {
       granularity: 'weekly',
       config: generateWeeklyTimeline(startDate, endDate),
@@ -60,7 +76,7 @@ export const generateDailyTimeline = (startDate, endDate, options = {}) => {
     const label = `${dayOfWeek} ${dayOfMonth}`;
 
     // Include day if: weekends requested OR it's a weekday (Mon-Fri)
-    const isWeekday = dayOfWeekNumber >= 1 && dayOfWeekNumber <= 5;
+    const isWeekday = dayOfWeekNumber >= WEEKDAY_RANGE.MIN && dayOfWeekNumber <= WEEKDAY_RANGE.MAX;
     const shouldIncludeDay = includeWeekends || isWeekday;
 
     if (shouldIncludeDay) {
@@ -167,7 +183,7 @@ export const generateWeeklyTimeline = (startDate, endDate) => {
 
   while (weekStart <= endDate) {
     const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6); // Saturday
+    weekEnd.setDate(weekStart.getDate() + (DAYS_PER_WEEK - 1)); // Saturday
 
     // Only include weeks that actually overlap with our date range
     if (weekEnd >= startDate) {
@@ -200,7 +216,7 @@ export const generateWeeklyTimeline = (startDate, endDate) => {
       weekCounter++;
     }
 
-    weekStart.setDate(weekStart.getDate() + 7);
+    weekStart.setDate(weekStart.getDate() + DAYS_PER_WEEK);
   }
 
   // Convert months map to array
@@ -342,10 +358,10 @@ export const calculateTimelineSpan = (startDate, endDate) => {
 
   // Calculate days difference
   const timeDiff = endDate.getTime() - startDate.getTime();
-  const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  const days = Math.ceil(timeDiff / MILLISECONDS_PER_DAY);
 
   // Calculate weeks (rounded up)
-  const weeks = Math.ceil(days / 7);
+  const weeks = Math.ceil(days / DAYS_PER_WEEK);
 
   // Calculate months - more complex calculation
   let months = 0;
@@ -411,9 +427,9 @@ const parseTimelineFromMarkdown = (line) => {
           const endWeekNum = parseInt(endWeekStr);
           const endMonth = parseMonth(endMonthStr);
 
-          if (endMonth !== null && endWeekNum >= 1 && endWeekNum <= 4) {
+          if (endMonth !== null && endWeekNum >= 1 && endWeekNum <= WEEKS_PER_MONTH) {
             const year = new Date().getFullYear();
-            const endDay = endWeekNum * 7; // End of the week
+            const endDay = endWeekNum * DAYS_PER_WEEK; // End of the week
             const endDate = new Date(year, endMonth, endDay);
 
             return { startDate, endDate };
@@ -473,11 +489,11 @@ const parseFlexibleDate = (dateStr) => {
       const weekNum = parseInt(weekStr);
       const month = parseMonth(monthStr);
 
-      if (month !== null && weekNum >= 1 && weekNum <= 4) {
+      if (month !== null && weekNum >= 1 && weekNum <= WEEKS_PER_MONTH) {
         // Use same logic as existing code: Math.ceil(day / 7)
         // Week 1: days 1-7, Week 2: days 8-14, Week 3: days 15-21, Week 4: days 22-28
         const year = new Date().getFullYear();
-        const startDay = (weekNum - 1) * 7 + 1;
+        const startDay = (weekNum - 1) * DAYS_PER_WEEK + 1;
         const targetDate = new Date(year, month, startDay);
 
         return targetDate;
@@ -500,7 +516,7 @@ const parseFlexibleDate = (dateStr) => {
         const month = parseMonth(monthStr);
         const day = parseInt(dayStr);
 
-        if (month !== null && day >= 1 && day <= 31) {
+        if (month !== null && day >= DAY_RANGE.MIN && day <= DAY_RANGE.MAX) {
           const year = new Date().getFullYear();
           return new Date(year, month, day);
         }
@@ -510,7 +526,7 @@ const parseFlexibleDate = (dateStr) => {
     // Handle "20" or "29" when it's the end part of "July 20-29"
     if (/^\d{1,2}$/.test(dateStr.trim())) {
       const day = parseInt(dateStr.trim());
-      if (day >= 1 && day <= 31) {
+      if (day >= DAY_RANGE.MIN && day <= DAY_RANGE.MAX) {
         // We need context for the month - this should be handled by the caller
         // For now, assume July (month 6) as in the test
         const year = new Date().getFullYear();

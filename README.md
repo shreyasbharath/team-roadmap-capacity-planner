@@ -11,7 +11,7 @@ A **cross-platform** interactive roadmap and capacity planning tool with live ma
 
 ## 🎯 Platform Support
 
-**🌐 Web Application**: Access anywhere through your browser with file download/upload  
+**🌐 Web Application**: Access anywhere through your browser with file download/upload
 **🖥️ Desktop Application**: Native app with full file system access and enhanced performance
 - **Windows**: `.msi` installer with auto-updater support
 - **macOS**: Universal binary (Intel + Apple Silicon) with code signing
@@ -452,7 +452,21 @@ pnpm test:coverage    # Run tests with coverage
 7. Push to the branch (`git push origin feature/amazing-feature`)
 8. Open a Pull Request
 
-### Development Tips
+### Development
+
+### Quick Start
+```bash
+git clone <repository>
+cd team-roadmap-capacity-planner
+pnpm install
+pnpm dev  # Web development
+```
+
+### Development Guidelines
+- **Follow clean code principles**: See [CODING_STANDARDS.md](CODING_STANDARDS.md) for detailed guidelines
+- **No magic numbers**: Use named constants for all numeric values
+- **Test-first approach**: Write failing tests before implementing features
+- **Single responsibility**: Keep functions focused and cohesive
 
 - Use `pnpm tauri:dev` for desktop development (hot reload included)
 - Test file operations in desktop mode with actual save/load workflows

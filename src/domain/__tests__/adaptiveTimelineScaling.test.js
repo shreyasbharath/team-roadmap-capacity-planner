@@ -82,6 +82,79 @@ describe('Adaptive Timeline Scaling', () => {
       expect(result.config.quarters).toBeDefined();
     });
 
+    it('should use daily view for 22-day roadmap with team capacity and risks', () => {
+      // Arrange - Real-world scenario: 3+ week sprint with capacity planning
+      const realWorldMarkdown = `# Winners Upcoming Sprints
+
+## Aug 4-22, 2025 (Weekdays Only)
+
+## Team Capacity
+- **Scott Annual Leave**: 2025-08-08 to 2025-08-08 | color: #FFA500
+- **Andrew off**: 2025-08-22 to 2025-08-26 | color: #FF6B6B
+
+## Streams
+
+### Club Game Change Requests
+- **Auto Cancel Workflow**: 2025-08-04 to 2025-08-06 | Alex, Jordan | hard-deadline: 2025-08-06 | deadline-label: Feature Complete | color: #4F46E5
+
+## Risks
+- **Andrew leaving**: 2025-08-22 to 2025-08-26 | risk-level: high | color: #DC2626`;
+
+      // Act
+      const result = determineTimelineGranularity(realWorldMarkdown);
+
+      // Assert - Should be daily view (22 days ≤ 30-day threshold)
+      expect(result.granularity).toBe('daily');
+      expect(result.span).toBe(22); // Aug 4 to Aug 26 = 22 days
+      expect(result.config.type).toBe('daily');
+      expect(result.config.days).toBeDefined();
+      expect(result.config.days.length).toBeGreaterThan(15); // Weekdays only
+      expect(result.config.includesWeekends).toBe(false);
+      expect(result.config.workdaysOnly).toBe(true);
+
+      // Verify date range parsing found all items
+      const ranges = extractDateRanges(realWorldMarkdown);
+      expect(ranges).toHaveLength(4); // Scott leave, Andrew off, Auto Cancel, Andrew leaving risk
+    });
+
+    it('should use weekly view when roadmap exceeds 30-day threshold', () => {
+      // Arrange - Roadmap spanning 35 days (exceeds daily threshold)
+      const longMarkdown = `# Long Project
+
+## Streams
+
+### Development
+- **Phase 1**: 2025-08-01 to 2025-08-15 | Team A | color: #4F46E5
+- **Phase 2**: 2025-08-16 to 2025-09-05 | Team B | color: #10B981`;
+
+      // Act
+      const result = determineTimelineGranularity(longMarkdown);
+
+      // Assert - Should be weekly view (35 days > 30-day threshold)
+      expect(result.granularity).toBe('weekly');
+      expect(result.span).toBe(35); // Aug 1 to Sep 5 = 35 days
+      expect(result.config.type).toBe('weekly');
+      expect(result.config.weeks).toBeDefined();
+    });
+
+    it('should handle edge case at exact 30-day threshold', () => {
+      // Arrange - Exactly 30 days (boundary condition)
+      const boundaryMarkdown = `# Boundary Test
+
+## Streams
+
+### Project
+- **30-Day Project**: 2025-08-01 to 2025-08-30 | Team | color: #4F46E5`;
+
+      // Act
+      const result = determineTimelineGranularity(boundaryMarkdown);
+
+      // Assert - Should be daily view (30 days = threshold)
+      expect(result.granularity).toBe('daily');
+      expect(result.span).toBe(29); // Aug 1 to Aug 30 = 29 days (inclusive)
+      expect(result.config.type).toBe('daily');
+    });
+
     it('should handle mixed date formats in sprint markdown', () => {
       // Arrange - Mixed date formats
       const mixedMarkdown = `# Sprint with Mixed Formats
@@ -96,13 +169,13 @@ describe('Adaptive Timeline Scaling', () => {
       // Act
       const result = determineTimelineGranularity(mixedMarkdown);
 
-      // Assert - Overall span is ~28 days (Jun 30 to Jul 29), so should be weekly
-      expect(result.granularity).toBe('weekly');
+      // Assert - Overall span is ~28 days (Jun 30 to Jul 29), so should be daily (threshold is 30)  
+      expect(result.granularity).toBe('daily');
       expect(result.span).toBeGreaterThan(21);
-      expect(result.span).toBeLessThanOrEqual(84);
+      expect(result.span).toBeLessThanOrEqual(30);
       expect(result.config).toBeDefined();
-      expect(result.config.type).toBe('weekly');
-      expect(result.config.weeks).toBeDefined();
+      expect(result.config.type).toBe('daily');
+      expect(result.config.days).toBeDefined();
     });
 
     it('should fallback to quarterly for empty markdown', () => {

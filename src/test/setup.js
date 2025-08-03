@@ -1,6 +1,6 @@
 /* global global */
 import '@testing-library/jest-dom';
-import { afterEach } from 'vitest';
+import { afterEach, beforeEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
 // Set React 18 environment flag for testing
@@ -17,6 +17,41 @@ Object.defineProperty(window, 'matchMedia', {
   })
 });
 
+// Mock URL methods for file operations
+global.URL.createObjectURL = vi.fn(() => 'blob:test-url');
+global.URL.revokeObjectURL = vi.fn();
+
+// Mock Navigation API to prevent JSDOM errors
+Object.defineProperty(window, 'navigation', {
+  writable: true,
+  value: {
+    navigate: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn()
+  }
+});
+
+// Suppress JSDOM navigation errors
+const originalConsoleError = console.error;
+beforeEach(() => {
+  console.error = (...args) => {
+    const errorMessage = args[0]?.toString?.() ?? '';
+    
+    // Suppress specific JSDOM errors that don't affect test validity
+    if (
+      errorMessage.includes('Not implemented: navigation') ||
+      errorMessage.includes('Not implemented: HTMLFormElement.prototype.submit') ||
+      errorMessage.includes('window.__TAURI_IPC__ is not a function')
+    ) {
+      return; // Don't log these expected errors
+    }
+    
+    // Log everything else normally
+    originalConsoleError(...args);
+  };
+});
+
 afterEach(() => {
+  console.error = originalConsoleError;
   cleanup();
 });
