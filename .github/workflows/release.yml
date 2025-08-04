@@ -1,0 +1,305 @@
+name: Release and Build Cross-Platform Apps
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: "Release type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  # Run tests first to ensure quality
+  test:
+    runs-on: ubuntu-latest
+    name: Test Suite
+    outputs:
+      should_release: ${{ steps.check_release.outputs.should_release }}
+      new_version: ${{ steps.check_release.outputs.new_version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run linting
+        run: pnpm lint
+
+      - name: Run full test suite
+        run: pnpm test -- --run
+
+      - name: Test web build
+        run: pnpm build
+
+      - name: Check if release needed
+        id: check_release
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            # Calculate new version based on input
+            CURRENT_VERSION=$(node -p "require('./package.json').version")
+            if [[ "${{ github.event.inputs.release_type }}" == "major" ]]; then
+              NEW_VERSION=$(npx semver $CURRENT_VERSION -i major)
+            elif [[ "${{ github.event.inputs.release_type }}" == "minor" ]]; then
+              NEW_VERSION=$(npx semver $CURRENT_VERSION -i minor)
+            else
+              NEW_VERSION=$(npx semver $CURRENT_VERSION -i patch)
+            fi
+            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]] && [[ "${{ github.event_name }}" == "push" ]]; then
+            # Auto-release on main if version changed
+            git diff HEAD~1 HEAD --name-only | grep -q "package.json" && echo "should_release=true" >> $GITHUB_OUTPUT || echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "new_version=$(node -p 'require(\"./package.json\").version')" >> $GITHUB_OUTPUT
+          else
+            echo "should_release=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Build desktop apps for all platforms in parallel
+  build-desktop:
+    needs: test
+    if: needs.test.outputs.should_release == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "macos-latest"
+            os_name: "macOS"
+            arch: "universal"
+            bundle_extension: ".dmg"
+            executable_extension: ".app"
+          - platform: "ubuntu-22.04"
+            os_name: "Linux"
+            arch: "x86_64"
+            bundle_extension: ".AppImage"
+            executable_extension: ""
+          - platform: "windows-latest"
+            os_name: "Windows"
+            arch: "x86_64"
+            bundle_extension: ".msi"
+            executable_extension: ".exe"
+
+    runs-on: ${{ matrix.platform }}
+    name: Build ${{ matrix.os_name }}
+    timeout-minutes: 15 # Prevent infinite hangs
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install pnpm dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update --fix-missing
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-3-dev \
+            libwebkit2gtk-4.0-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            libayatana-appindicator3-dev
+
+      - name: Setup Tauri if needed
+        shell: bash
+        run: |
+          if [[ ! -f "src-tauri/Cargo.toml" ]]; then
+            echo "Setting up Tauri for first time..."
+            bash setup-tauri.sh
+          fi
+
+      - name: Update version in Tauri config
+        if: needs.test.outputs.new_version
+        shell: bash
+        run: |
+          NEW_VERSION="${{ needs.test.outputs.new_version }}"
+          npm version $NEW_VERSION --no-git-tag-version
+          # Update Tauri config version
+          sed -i.bak "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" src-tauri/tauri.conf.json
+          rm -f src-tauri/tauri.conf.json.bak
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUST_BACKTRACE: 1
+        with:
+          # Don't create releases yet, we'll do that in a separate job
+          tagName: ""
+          releaseName: ""
+          releaseBody: ""
+          releaseDraft: true
+          prerelease: false
+
+      - name: Rename and organize artifacts
+        shell: bash
+        run: |
+          VERSION="${{ needs.test.outputs.new_version }}"
+          mkdir -p dist/release
+
+          # Find and rename the built files with consistent naming
+          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
+            find src-tauri/target/release/bundle -name "*.dmg" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.dmg" \;
+            find src-tauri/target/release/bundle -name "*.app" -exec cp -r {} "dist/release/" \;
+          elif [[ "${{ matrix.platform }}" == "ubuntu-20.04" ]]; then
+            find src-tauri/target/release/bundle -name "*.AppImage" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.AppImage" \;
+            find src-tauri/target/release/bundle -name "*.deb" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.deb" \;
+          elif [[ "${{ matrix.platform }}" == "windows-latest" ]]; then
+            find src-tauri/target/release/bundle -name "*.msi" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.msi" \;
+            find src-tauri/target/release -name "*.exe" -not -path "*/deps/*" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.exe" \;
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os_name }}-build
+          path: dist/release/
+          retention-days: 30
+
+  # Create GitHub release with all platform artifacts
+  create-release:
+    needs: [test, build-desktop]
+    if: needs.test.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    name: Create Release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Organize release assets
+        run: |
+          mkdir -p release-assets
+          find artifacts/ -type f \( -name "*.dmg" -o -name "*.msi" -o -name "*.AppImage" -o -name "*.deb" -o -name "*.exe" \) -exec cp {} release-assets/ \;
+          ls -la release-assets/
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          VERSION="${{ needs.test.outputs.new_version }}"
+          echo "## Team Roadmap Capacity Planner v${VERSION}" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "### What's New" >> CHANGELOG.md
+
+          # Get commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [[ -n "$LAST_TAG" ]]; then
+            git log ${LAST_TAG}..HEAD --oneline --no-merges | sed 's/^/- /' >> CHANGELOG.md
+          else
+            echo "- Initial release" >> CHANGELOG.md
+          fi
+
+          echo "" >> CHANGELOG.md
+          echo "### Downloads" >> CHANGELOG.md
+          echo "- **macOS**: Download the \`.dmg\` file" >> CHANGELOG.md
+          echo "- **Windows**: Download the \`.msi\` installer" >> CHANGELOG.md
+          echo "- **Linux**: Download the \`.AppImage\` or \`.deb\` file" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "### Installation" >> CHANGELOG.md
+          echo "- **macOS**: Double-click the DMG and drag to Applications" >> CHANGELOG.md
+          echo "- **Windows**: Run the MSI installer" >> CHANGELOG.md
+          echo "- **Linux**: Make AppImage executable and run, or install DEB package" >> CHANGELOG.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.test.outputs.new_version }}
+          name: Team Roadmap Planner v${{ needs.test.outputs.new_version }}
+          body_path: CHANGELOG.md
+          files: release-assets/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update package.json version on main
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          npm version ${{ needs.test.outputs.new_version }} --no-git-tag-version
+          git add package.json
+          git commit -m "chore: bump version to v${{ needs.test.outputs.new_version }}"
+          git push
+
+  # Optional: Deploy web version to GitHub Pages
+  deploy-web:
+    needs: [test, create-release]
+    if: needs.test.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    name: Deploy Web Version
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web version
+        run: pnpm build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          cname: roadmap-planner.your-domain.com # Optional: replace with your domain

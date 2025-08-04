@@ -32,8 +32,10 @@ Object.defineProperty(window, 'navigation', {
 });
 
 // Suppress JSDOM navigation errors
+// eslint-disable-next-line no-console
 const originalConsoleError = console.error;
 beforeEach(() => {
+  // eslint-disable-next-line no-console
   console.error = (...args) => {
     const errorMessage = args[0]?.toString?.() ?? '';
     
@@ -52,6 +54,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  // eslint-disable-next-line no-console
   console.error = originalConsoleError;
   cleanup();
 });

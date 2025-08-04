@@ -509,5 +509,14 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - **Issues**: [GitHub Issues](https://github.com/your-username/roadmap-planner/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-username/roadmap-planner/discussions)
 - **Documentation**: [Wiki](https://github.com/your-username/roadmap-planner/wiki)
+- **Releases**: See [RELEASES.md](docs/RELEASES.md) for release process
+
+## 📦 Downloads
+
+**Latest Release**: [Download for your platform](https://github.com/your-username/roadmap-planner/releases/latest)
+
+- 🍎 **macOS**: Download `.dmg` installer
+- 🪟 **Windows**: Download `.msi` installer
+- 🐧 **Linux**: Download `.AppImage` or `.deb` package
 
 **Choose Your Platform**: 🌐 [**Try Web Version**](https://your-demo-url.com) | 🖥️ [**Download Desktop App**](https://github.com/your-username/roadmap-planner/releases)

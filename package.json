@@ -22,7 +22,11 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
-    "tauri:icon": "tauri icon"
+    "tauri:icon": "tauri icon",
+    "release:patch": "npm version patch && git push && git push --tags",
+    "release:minor": "npm version minor && git push && git push --tags",
+    "release:major": "npm version major && git push && git push --tags",
+    "release:manual": "echo 'Use GitHub workflow_dispatch to create manual releases'"
   },
   "keywords": [
     "roadmap",
@@ -61,6 +65,7 @@
     "jsdom": "^23.2.0",
     "postcss": "^8.5.6",
     "puppeteer": "^22.15.0",
+    "semver": "^7.6.0",
     "tailwindcss": "^3.4.17",
     "vite": "^4.5.14",
     "vitest": "^0.34.6"

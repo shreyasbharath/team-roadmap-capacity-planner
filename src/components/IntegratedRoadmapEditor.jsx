@@ -1,5 +1,5 @@
 // src/components/IntegratedRoadmapEditor.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { MarkdownEditor } from './MarkdownEditor.jsx';
 import { RoadmapPlanner } from './RoadmapPlanner.jsx';
 import roadmapData from '../data/roadmap.md?raw';
@@ -8,11 +8,11 @@ import roadmapData from '../data/roadmap.md?raw';
  * Integrated roadmap editor combining markdown editing with live preview
  * Provides seamless editing experience with real-time roadmap updates
  */
-export const IntegratedRoadmapEditor = ({ 
+export const IntegratedRoadmapEditor = ({
   initialMarkdown = roadmapData,
   enableDebug = false,
   className = '',
-  ...props 
+  ...props
 }) => {
   const [currentMarkdown, setCurrentMarkdown] = useState(initialMarkdown);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -21,25 +21,12 @@ export const IntegratedRoadmapEditor = ({
   const [isModified, setIsModified] = useState(false);
   const [lastSavedContent, setLastSavedContent] = useState(initialMarkdown);
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-        e.preventDefault();
-        handleSave();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [currentMarkdown, currentFilePath]); // Dependencies for handleSave closure
-
   const handleMarkdownChange = (markdown) => {
     setCurrentMarkdown(markdown);
     setIsModified(markdown !== lastSavedContent);
   };
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     // In desktop mode, this would save to file
     // In web mode, this could trigger a download or save to localStorage
     try {
@@ -47,7 +34,7 @@ export const IntegratedRoadmapEditor = ({
         // Tauri desktop save
         const { save } = await import('@tauri-apps/api/dialog');
         const { writeTextFile } = await import('@tauri-apps/api/fs');
-        
+
         let filePath = currentFilePath;
         
         // If no current file, prompt for save location
@@ -59,20 +46,20 @@ export const IntegratedRoadmapEditor = ({
             }]
           });
         }
-        
+
         if (filePath) {
           await writeTextFile(filePath, currentMarkdown);
-          
+
           // Update file state after successful save
           if (!currentFilePath) {
             setCurrentFilePath(filePath);
             setCurrentFileName(filePath.split('/').pop());
           }
-          
+
           // Mark as saved
           setLastSavedContent(currentMarkdown);
           setIsModified(false);
-          
+
           // Show success toast or notification
         }
       } else {
@@ -91,7 +78,20 @@ export const IntegratedRoadmapEditor = ({
       console.error('Failed to save:', error); // eslint-disable-line no-console
       // Show error toast or notification
     }
-  };
+  }, [currentMarkdown, currentFilePath, currentFileName, setCurrentFilePath, setCurrentFileName, setLastSavedContent, setIsModified]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleSave]); // handleSave is now stable due to useCallback
 
   const handleLoad = async () => {
     try {
@@ -99,14 +99,14 @@ export const IntegratedRoadmapEditor = ({
         // Tauri desktop load
         const { open } = await import('@tauri-apps/api/dialog');
         const { readTextFile } = await import('@tauri-apps/api/fs');
-        
+
         const selected = await open({
           filters: [{
             name: 'Markdown',
             extensions: ['md']
           }]
         });
-        
+
         if (selected && typeof selected === 'string') {
           const contents = await readTextFile(selected);
           setCurrentMarkdown(contents);
@@ -159,8 +159,8 @@ export const IntegratedRoadmapEditor = ({
           <h1 className="text-lg font-semibold text-gray-900">Roadmap Editor</h1>
           {currentFileName && (
             <span className={`px-2 py-1 text-xs rounded ${
-              isModified 
-                ? 'bg-amber-100 text-amber-800' 
+              isModified
+                ? 'bg-amber-100 text-amber-800'
                 : 'bg-blue-100 text-blue-800'
             }`}>
               {currentFileName}{isModified ? ' •' : ''}
@@ -172,7 +172,7 @@ export const IntegratedRoadmapEditor = ({
             </span>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2">
           <button
             onClick={handleLoad}
@@ -181,7 +181,7 @@ export const IntegratedRoadmapEditor = ({
           >
             📂 Load
           </button>
-          
+
           <button
             onClick={handleSave}
             className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ${
@@ -193,7 +193,7 @@ export const IntegratedRoadmapEditor = ({
           >
             💾 Save{isModified ? ' *' : ''}
           </button>
-          
+
           <button
             onClick={handleExportPDF}
             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors duration-150"
@@ -201,9 +201,9 @@ export const IntegratedRoadmapEditor = ({
           >
             📄 Export PDF
           </button>
-          
+
           <div className="h-6 border-l border-gray-300 mx-2" />
-          
+
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors duration-150"
@@ -238,7 +238,7 @@ export const IntegratedRoadmapEditor = ({
           <span>Lines: {currentMarkdown.split('\n').length}</span>
           <span>Characters: {currentMarkdown.length}</span>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <span>{isModified ? 'Modified' : 'Saved'}</span>
           <div className="flex items-center gap-1">

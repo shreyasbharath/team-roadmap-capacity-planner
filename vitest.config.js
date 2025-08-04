@@ -9,6 +9,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
     reporter: 'default',
+    // Global test timeout configuration
+    testTimeout: 10000, // 10 seconds max per test
+    hookTimeout: 10000, // 10 seconds max for setup/teardown hooks
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: [

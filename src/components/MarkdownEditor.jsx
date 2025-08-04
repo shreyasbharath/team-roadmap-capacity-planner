@@ -18,6 +18,11 @@ export const MarkdownEditor = ({
   const [showSyntaxHelp, setShowSyntaxHelp] = useState(false);
   const textareaRef = useRef(null);
 
+  // Sync internal state with prop changes (fixes file loading bug)
+  useEffect(() => {
+    setMarkdown(initialMarkdown);
+  }, [initialMarkdown]);
+
   // Update parent when markdown changes
   useEffect(() => {
     onMarkdownChange?.(markdown);
