@@ -562,31 +562,27 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 The app will trigger macOS security warnings because it's not signed with an Apple Developer certificate. Here are **three methods** to install it safely:
 
-#### Method 1: Terminal Command (Easiest)
+#### Method 1: Complete Quarantine Removal (Most Effective for "Damaged" Error)
 1. Download the `.dmg` file
-2. Open **Terminal** (Applications → Utilities → Terminal)
-3. Run this command to remove the quarantine:
+2. Open **Terminal** and run these commands:
    ```bash
-   xattr -d com.apple.quarantine ~/Downloads/team-roadmap-planner*.dmg
+   cd ~/Downloads
+   sudo xattr -r -d com.apple.quarantine team-roadmap-planner*.dmg
+   open team-roadmap-planner*.dmg
+   sudo xattr -r -d com.apple.quarantine "/Volumes/Roadmap Planner/Roadmap Planner.app"
+   cp -R "/Volumes/Roadmap Planner/Roadmap Planner.app" /Applications/
+   sudo xattr -r -d com.apple.quarantine "/Applications/Roadmap Planner.app"
    ```
-4. Now double-click the `.dmg` file normally
-5. Drag the app to Applications folder
 
-#### Method 2: System Preferences Override
-1. Download and try to open the `.dmg` file
-2. When you see the "damaged" warning, click **Cancel**
-3. Go to **System Preferences** → **Security & Privacy** → **General** tab
-4. You'll see a message about the blocked app with an **"Open Anyway"** button
-5. Click **"Open Anyway"**
-6. Confirm by clicking **"Open"** in the dialog
-7. The `.dmg` will now open - drag the app to Applications
+#### Method 2: Temporarily Disable Gatekeeper
+1. Open **Terminal** and run: `sudo spctl --master-disable`
+2. Install the app normally (double-click .dmg)
+3. Re-enable: `sudo spctl --master-enable`
 
-#### Method 3: Right-Click Method (Older macOS)
-1. Download the `.dmg` file
-2. **Right-click** (or Control-click) the `.dmg` file
-3. Select **"Open"** from the context menu
-4. Click **"Open"** in the security dialog
-5. Drag the app to Applications folder
+#### Method 3: System Preferences Override
+1. Try to open the `.dmg` file (it will be blocked)
+2. Go to **System Preferences** → **Security & Privacy** → **General**
+3. Look for "Open Anyway" button and click it
 
 #### If None of These Work:
 1. Open **Terminal**
