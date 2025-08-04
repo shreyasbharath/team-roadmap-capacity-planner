@@ -1,13 +1,17 @@
 # Roadmap Planner
 
-A **cross-platform** interactive roadmap and capacity planning tool with live markdown editing. Built with React and Tauri, available as both a web application and native desktop app for Windows, macOS, and Linux.
+A **cross-platform** interactive roadmap and capacity planning tool with **live markdown editing**. Built with React and Tauri, available as both a web application and native desktop app for Windows, macOS, and Linux.
 
-![Interactive Roadmap Editor](image.png)
-![Quarterly Plan](docs/complex-roadmap.png)
+![Interactive Roadmap Editor](docs/screenshots/web-editor-view.png)
+*Side-by-side markdown editor with real-time roadmap preview - edit on the left, see updates instantly on the right*
 
-*Live markdown editor with real-time roadmap preview showing project streams, team capacity, milestones, and risk tracking*
+![Comprehensive Roadmap View](docs/screenshots/web-full-roadmap.png)
+*Complete roadmap visualization showing project streams, team capacity, milestones, and risk tracking across multiple quarters*
 
-> **Note**: If the screenshots above don't display, run `pnpm screenshot` to generate them.
+![Editing in Action](docs/screenshots/editing-in-action.png)
+*Live editing functionality - changes in the markdown immediately update the visual timeline*
+
+> 📸 **Screenshots**: Run `pnpm screenshot` to generate updated screenshots showcasing the latest features
 
 ## 🎯 Platform Support
 
@@ -17,32 +21,29 @@ A **cross-platform** interactive roadmap and capacity planning tool with live ma
 - **macOS**: Universal binary (Intel + Apple Silicon) with code signing
 - **Linux**: `.deb` and `.AppImage` packages
 
-## ✨ Features
+## ✨ Key Features
 
-### Core Features
-- **Live Markdown Editor**: Edit roadmaps in real-time with instant visual preview
-- **Split-Pane Interface**: Code and visual roadmap side-by-side
-- **Template System**: Quick-insert buttons for streams, tasks, milestones, risks
-- **Syntax Validation**: Real-time error checking and helpful suggestions
+### 📝 Live Markdown Editor
+- **Side-by-Side Interface**: Edit markdown on the left, see roadmap updates instantly on the right
+- **Real-Time Preview**: Changes appear immediately as you type - no save/refresh needed
+- **Template System**: Quick-insert buttons for streams, projects, milestones, capacity, and risks
+- **Syntax Validation**: Real-time error checking with helpful suggestions and line-by-line feedback
+- **Full-Screen Editing**: Distraction-free markdown editing mode with syntax highlighting
+
+### 🎯 Roadmap Visualization  
 - **Interactive Timeline**: Pan and zoom through your roadmap with smooth performance
-- **Team Capacity Planning**: Visualise leave, holidays, and resource constraints
-- **Risk Management**: Track and display project risks with severity levels
-- **Milestone Tracking**: Hard and soft deadlines with visual indicators
-- **Adaptive Timeline**: Automatic daily/weekly/quarterly granularity based on date ranges
-- **Responsive Design**: Optimised for desktop, tablet, and mobile
+- **Adaptive Granularity**: Automatic daily/weekly/quarterly views based on date ranges
+- **Team Capacity Planning**: Visualise leave, holidays, and resource constraints overlaid on timelines
+- **Risk Management**: Track and display project risks with color-coded severity levels
+- **Milestone Tracking**: Hard and soft deadlines with custom labels and visual indicators
+- **Responsive Design**: Optimised for desktop, tablet, and mobile viewing
 
-### File Operations
-- **Load Any File**: Import roadmap markdown files from anywhere
-- **Save & Export**: Save markdown files and export professional PDF reports
-- **Enhanced Export**: Native save dialogs with full PDF/PNG export
-- **Keyboard Navigation**: Full keyboard support with OS-native shortcuts
-- **Performance**: Native rendering with hardware acceleration
-- **Offline First**: No internet connection required
-
-### Web-Specific Features
-- **Instant Access**: No installation required
-- **Share URLs**: Link directly to specific roadmap views
-- **Cloud Integration**: Easy deployment to any hosting platform
+### 💾 File Operations & Export
+- **Universal File Support**: Load any markdown file from your computer or web
+- **Auto-Save**: Never lose your work with automatic saving as you edit
+- **Professional Export**: Generate high-quality PDF reports and PNG screenshots
+- **Native Integration**: Desktop app with OS-native file dialogs and keyboard shortcuts
+- **Cross-Platform**: Identical features on Windows, macOS, Linux, and web browsers
 
 ## 🚀 Quick Start
 
@@ -196,12 +197,38 @@ Showcases all features - team capacity, risks, multiple deadline types, and deta
 
 ### Supported Properties
 
-- **Timeline**: `Jul W1-Sep W2` (week ranges)
+- **Timeline**: `Jul W1-Sep W2` (week ranges) or `2025-07-15 to 2025-07-25` (daily ranges)
 - **Teams**: Any text describing who's working on it
 - **Colours**: Hex colour codes for visual differentiation
 - **Deadlines**: `hard-deadline` or `soft-deadline` with ISO dates
 - **Risks**: `risk-level: high|medium|low`
 - **Labels**: Custom `deadline-label` for milestone annotations
+- **Team Capacity**: Leave, conferences, training with date ranges and colors
+
+## ✏️ Editing Experience
+
+### Live Preview
+The markdown editor provides instant feedback as you type. Changes appear in the roadmap visualization immediately - no save button required. This makes it easy to experiment with different layouts, colors, and timeline arrangements.
+
+### Template Shortcuts
+Quick-insert buttons help you add common elements:
+- **Add Stream**: Creates a new project stream with sample tasks
+- **Add Capacity**: Inserts team member leave or availability  
+- **Add Milestone**: Creates deadline markers with customizable labels
+- **Add Risk**: Adds risk tracking with severity levels
+
+### Syntax Assistance
+The editor provides real-time validation:
+- **Error Highlighting**: Invalid date formats or missing properties are highlighted
+- **Auto-Completion**: Common date patterns and property names are suggested
+- **Helpful Messages**: Clear error messages explain how to fix syntax issues
+- **Color Preview**: Hex color codes show a preview swatch
+
+### Workflow Integration
+- **Draft Mode**: Edit freely without affecting saved files
+- **Auto-Save**: Changes are preserved automatically in browser/desktop app
+- **Export on Demand**: Generate PDFs and screenshots any time during editing
+- **Keyboard Shortcuts**: Standard shortcuts work (Ctrl/Cmd+S, Ctrl/Cmd+O, etc.)
 
 ## 📄 Export & File Management
 
@@ -241,10 +268,29 @@ The desktop app provides native file management:
 
 ### Screenshot Generation
 
+Generate updated screenshots showcasing the latest features:
+
 ```bash
-# Generate screenshot for documentation
+# Generate comprehensive screenshot suite
 pnpm screenshot
+
+# Generate specific example screenshots  
+pnpm screenshot:examples
 ```
+
+**What gets captured:**
+- **Web Editor View**: Side-by-side markdown editor with live preview
+- **Full Roadmap View**: Complete timeline with all features visible
+- **Editing in Action**: Live editing functionality demonstration  
+- **Mobile Responsive**: Tablet and mobile layouts
+- **Timeline Details**: Zoomed views showing granular detail
+- **Simple Examples**: Getting started screenshots
+
+**Desktop Screenshots:**
+1. Build desktop app: `pnpm tauri:build`
+2. Launch the built application  
+3. Use system screenshot tools to capture native interface
+4. Save to `docs/screenshots/desktop-*.png`
 
 ## 🎮 Controls & Navigation
 
@@ -425,10 +471,12 @@ pnpm tauri            # Access Tauri CLI directly
 
 ### Utility Commands
 ```bash
-pnpm pdf              # Generate PDF export
-pnpm screenshot       # Generate documentation screenshot
-pnpm lint             # Run ESLint
-pnpm test:coverage    # Run tests with coverage
+pnpm screenshot          # Generate comprehensive screenshot suite (NEW!)
+pnpm screenshot:examples # Generate roadmap example screenshots  
+pnpm pdf                 # Generate PDF export
+pnpm lint                # Run ESLint
+pnpm test:coverage       # Run tests with coverage
+pnpm check               # Run build + lint validation
 ```
 
 ## 🤝 Contributing
@@ -442,36 +490,25 @@ pnpm test:coverage    # Run tests with coverage
    pnpm dev
 
    # Test desktop version
-   pnpm tauri:dev
+   pnmp tauri:dev
    ```
 5. Update documentation and generate screenshots:
    ```bash
-   pnpm screenshot
+   # Generate comprehensive screenshot suite
+   pnmp screenshot
+   
+   # See docs/SCREENSHOTS.md for desktop screenshot guide
    ```
 6. Commit your changes (`git commit -m 'feat: add amazing feature'`)
 7. Push to the branch (`git push origin feature/amazing-feature`)
 8. Open a Pull Request
 
-### Development
-
-### Quick Start
-```bash
-git clone <repository>
-cd team-roadmap-capacity-planner
-pnpm install
-pnpm dev  # Web development
-```
-
 ### Development Guidelines
 - **Follow clean code principles**: See [CODING_STANDARDS.md](CODING_STANDARDS.md) for detailed guidelines
+- **Screenshots**: Use `pnmp screenshot` to generate updated web screenshots. See [docs/SCREENSHOTS.md](docs/SCREENSHOTS.md) for desktop screenshots
 - **No magic numbers**: Use named constants for all numeric values
 - **Test-first approach**: Write failing tests before implementing features
 - **Single responsibility**: Keep functions focused and cohesive
-
-- Use `pnpm tauri:dev` for desktop development (hot reload included)
-- Test file operations in desktop mode with actual save/load workflows
-- Verify both web and desktop exports work correctly
-- Use `pnpm tauri:build` to test production desktop builds
 
 ## 📋 Requirements
 
@@ -516,7 +553,58 @@ MIT License - see [LICENSE](LICENSE) file for details.
 **Latest Release**: [Download for your platform](https://github.com/your-username/roadmap-planner/releases/latest)
 
 - 🍎 **macOS**: Download `.dmg` installer
+  - **⚠️ Security Warning**: You'll see "damaged" or "unidentified developer" warnings
+  - **📋 [Detailed Installation Guide](docs/MACOS_INSTALLATION.md)** - Step-by-step troubleshooting
 - 🪟 **Windows**: Download `.msi` installer
 - 🐧 **Linux**: Download `.AppImage` or `.deb` package
+
+### 🍎 macOS Installation (Detailed Steps)
+
+The app will trigger macOS security warnings because it's not signed with an Apple Developer certificate. Here are **three methods** to install it safely:
+
+#### Method 1: Terminal Command (Easiest)
+1. Download the `.dmg` file
+2. Open **Terminal** (Applications → Utilities → Terminal)
+3. Run this command to remove the quarantine:
+   ```bash
+   xattr -d com.apple.quarantine ~/Downloads/team-roadmap-planner*.dmg
+   ```
+4. Now double-click the `.dmg` file normally
+5. Drag the app to Applications folder
+
+#### Method 2: System Preferences Override
+1. Download and try to open the `.dmg` file
+2. When you see the "damaged" warning, click **Cancel**
+3. Go to **System Preferences** → **Security & Privacy** → **General** tab
+4. You'll see a message about the blocked app with an **"Open Anyway"** button
+5. Click **"Open Anyway"**
+6. Confirm by clicking **"Open"** in the dialog
+7. The `.dmg` will now open - drag the app to Applications
+
+#### Method 3: Right-Click Method (Older macOS)
+1. Download the `.dmg` file
+2. **Right-click** (or Control-click) the `.dmg` file
+3. Select **"Open"** from the context menu
+4. Click **"Open"** in the security dialog
+5. Drag the app to Applications folder
+
+#### If None of These Work:
+1. Open **Terminal**
+2. Run: `sudo spctl --master-disable` (temporarily disables Gatekeeper)
+3. Install the app normally
+4. Run: `sudo spctl --master-enable` (re-enables Gatekeeper)
+5. **Warning**: Only do this temporarily and re-enable immediately after installation
+
+#### Still Having Issues?
+Try this terminal command after downloading:
+```bash
+# Remove quarantine from the downloaded file
+xattr -d com.apple.quarantine ~/Downloads/team-roadmap-planner*.dmg
+
+# If that doesn't work, try this more comprehensive removal:
+sudo xattr -r -d com.apple.quarantine ~/Downloads/team-roadmap-planner*.dmg
+```
+
+> **Why these warnings?** The app isn't code-signed with an Apple Developer certificate ($99/year). The app is completely safe - this is just macOS being protective of unsigned applications.
 
 **Choose Your Platform**: 🌐 [**Try Web Version**](https://your-demo-url.com) | 🖥️ [**Download Desktop App**](https://github.com/your-username/roadmap-planner/releases)

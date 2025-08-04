@@ -154,6 +154,7 @@ jobs:
         shell: bash
         run: |
           NEW_VERSION="${{ needs.test.outputs.new_version }}"
+          echo "Updating version to: $NEW_VERSION"
           npm version $NEW_VERSION --no-git-tag-version
           # Update Tauri config version
           sed -i.bak "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" src-tauri/tauri.conf.json
@@ -172,23 +173,60 @@ jobs:
           releaseDraft: true
           prerelease: false
 
+      - name: Debug build output
+        shell: bash
+        run: |
+          echo "Checking build output..."
+          ls -la src-tauri/target/ || echo "No target directory"
+          ls -la src-tauri/target/release/ || echo "No release directory"
+          ls -la src-tauri/target/release/bundle/ || echo "No bundle directory"
+
       - name: Rename and organize artifacts
         shell: bash
         run: |
           VERSION="${{ needs.test.outputs.new_version }}"
+          PLATFORM="${{ matrix.platform }}"
+          ARCH="${{ matrix.arch }}"
+
+          echo "Organizing artifacts for platform: $PLATFORM, version: $VERSION, arch: $ARCH"
           mkdir -p dist/release
 
-          # Find and rename the built files with consistent naming
-          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
-            find src-tauri/target/release/bundle -name "*.dmg" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.dmg" \;
-            find src-tauri/target/release/bundle -name "*.app" -exec cp -r {} "dist/release/" \;
-          elif [[ "${{ matrix.platform }}" == "ubuntu-20.04" ]]; then
-            find src-tauri/target/release/bundle -name "*.AppImage" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.AppImage" \;
-            find src-tauri/target/release/bundle -name "*.deb" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.deb" \;
-          elif [[ "${{ matrix.platform }}" == "windows-latest" ]]; then
-            find src-tauri/target/release/bundle -name "*.msi" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.msi" \;
-            find src-tauri/target/release -name "*.exe" -not -path "*/deps/*" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${{ matrix.arch }}.exe" \;
+          # Check if Tauri build succeeded
+          if [[ ! -d "src-tauri/target/release" ]]; then
+            echo "Error: Tauri build directory not found!"
+            ls -la src-tauri/target/ || echo "No target directory at all"
+            exit 1
           fi
+
+          # Find and rename the built files with consistent naming
+          if [[ "$PLATFORM" == "macos-latest" ]]; then
+            echo "Processing macOS artifacts..."
+            if find src-tauri/target/release/bundle -name "*.dmg" 2>/dev/null | head -1 | read; then
+              find src-tauri/target/release/bundle -name "*.dmg" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${ARCH}.dmg" \;
+            fi
+            if find src-tauri/target/release/bundle -name "*.app" 2>/dev/null | head -1 | read; then
+              find src-tauri/target/release/bundle -name "*.app" -exec cp -r {} "dist/release/" \;
+            fi
+          elif [[ "$PLATFORM" == "ubuntu-20.04" ]]; then
+            echo "Processing Linux artifacts..."
+            if find src-tauri/target/release/bundle -name "*.AppImage" 2>/dev/null | head -1 | read; then
+              find src-tauri/target/release/bundle -name "*.AppImage" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${ARCH}.AppImage" \;
+            fi
+            if find src-tauri/target/release/bundle -name "*.deb" 2>/dev/null | head -1 | read; then
+              find src-tauri/target/release/bundle -name "*.deb" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${ARCH}.deb" \;
+            fi
+          elif [[ "$PLATFORM" == "windows-latest" ]]; then
+            echo "Processing Windows artifacts..."
+            if find src-tauri/target/release/bundle -name "*.msi" 2>/dev/null | head -1 | read; then
+              find src-tauri/target/release/bundle -name "*.msi" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${ARCH}.msi" \;
+            fi
+            if find src-tauri/target/release -name "*.exe" -not -path "*/deps/*" 2>/dev/null | head -1 | read; then
+              find src-tauri/target/release -name "*.exe" -not -path "*/deps/*" -exec cp {} "dist/release/team-roadmap-planner_${VERSION}_${ARCH}.exe" \;
+            fi
+          fi
+
+          echo "Artifacts created:"
+          ls -la dist/release/ || echo "No artifacts found!"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
